@@ -5,41 +5,102 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
-
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Guest Routes (Tanpa Login)
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
-// Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
-// 1. FILM CONTROLLER (Menampilkan Detail Film & Jadwal)
 Route::get('/film/{id}', [FilmController::class, 'show'])->name('film.show');
-// Menampilkan semua film yang sedang tayang
 Route::get('/films/playing-now', [FilmController::class, 'playingNow'])->name('films.playingNow');
-// Halaman untuk semua film Upcoming
 Route::get('/films/upcoming', [FilmController::class, 'upcoming'])->name('films.upcoming');
-// 2. BOOKING CONTROLLER (Memilih Kursi & Membuat Pemesanan Awal)
-// Mengganti /kursi/{jadwal_id}
-Route::get('/booking/{jadwal_id}/kursi', [BookingController::class, 'create'])->name('booking.kursi'); 
-// Mengganti /booking/proses
-Route::post('/booking/proses', [BookingController::class, 'store'])->name('booking.proses');
-// Mengganti /booking/success/{pemesanan_id}
-Route::get('/booking/success/{pemesanan_id}', [BookingController::class, 'success'])->name('booking.success');
-// 3. PAYMENT CONTROLLER (Menampilkan Form Pembayaran & Memproses Pembayaran)
-// Mengganti /payment/{pemesanan_id}
-Route::get('/payment/{pemesanan_id}', [PaymentController::class, 'create'])->name('payment.show');
-// Mengganti /payment/{pemesanan_id}/process
-Route::post('/payment/{pemesanan_id}/process', [PaymentController::class, 'store'])->name('payment.process');
-// 4. INVOICE CONTROLLER (Menampilkan Invoice/E-Tiket Final)
-// Mengganti /invoice/{pemesanan_id}
-Route::get('/invoice/{pemesanan_id}', [InvoiceController::class, 'show'])->name('invoice.show');
 
+/*
+|--------------------------------------------------------------------------
+| Auth Routes (Login & Register)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Customer Routes (Perlu Login)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Customer'])->group(function () {
+    // Booking
+    Route::get('/booking/{jadwal_id}/kursi', [BookingController::class, 'create'])->name('booking.kursi'); 
+    Route::post('/booking/proses', [BookingController::class, 'store'])->name('booking.proses');
+    Route::get('/booking/success/{pemesanan_id}', [BookingController::class, 'success'])->name('booking.success');
+    
+    // Payment
+    Route::get('/payment/{pemesanan_id}', [PaymentController::class, 'create'])->name('payment.show');
+    Route::post('/payment/{pemesanan_id}/process', [PaymentController::class, 'store'])->name('payment.process');
+    
+    // Invoice
+    Route::get('/invoice/{pemesanan_id}', [InvoiceController::class, 'show'])->name('invoice.show');
+    
+    // Profile & Riwayat
+    Route::get('/profile', function () {
+        return view('profile.index');
+    })->name('profile.index');
+    
+    Route::get('/profile/riwayat', function () {
+        return view('profile.riwayat');
+    })->name('profile.riwayat');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Logout (Semua Role yang Login)
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+/*
+|--------------------------------------------------------------------------
+| Admin Dashboard
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Kasir Dashboard
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('kasir.dashboard');
+    })->name('dashboard');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Owner Dashboard
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:Owner'])->prefix('owner')->name('owner.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('owner.dashboard');
+    })->name('dashboard');
+});

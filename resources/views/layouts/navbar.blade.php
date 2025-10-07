@@ -27,20 +27,24 @@
                         ABOUT
                     </a>
                 </li>
+                
+                @guest
                 <li>
-                    <a href="{{ url('login') }}" class="hover:text-[#FEA923] transition {{ request()->is('login') ? 'text-[#FEA923]' : '' }}">
+                    <a href="{{ route('login') }}" class="hover:text-[#FEA923] transition {{ request()->is('login') ? 'text-[#FEA923]' : '' }}">
                         LOGIN
                     </a>
                 </li>
+                @endguest
             </ul>
 
-            <!-- Search + Button (Desktop) -->
+            <!-- Right Side (Search + Auth) -->
             <div class="hidden lg:flex items-center space-x-3">
+                <!-- Search -->
                 <div class="relative">
                     <input 
                         type="text" 
                         placeholder="Cari Film" 
-                        class="px-4 py-2 pr-10 rounded-full bg-white/100 backdrop-blur-sm text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:border-[#FEA923] focus:bg-white/20 transition w-48"
+                        class="px-4 py-2 pr-10 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:border-[#FEA923] focus:bg-white/20 transition w-48"
                     >
                     <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-[#FEA923]">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,12 +52,54 @@
                         </svg>
                     </button>
                 </div>
-                <a 
-                    href="{{ url('register') }}" 
-                    class="bg-[#FEA923] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#e69710] transition shadow-lg hover:shadow-[#FEA923]/50"
-                >
-                    Buat Akun
-                </a>
+
+                @guest
+                    <!-- Button Buat Akun (Guest) -->
+                    <a 
+                        href="{{ route('register') }}" 
+                        class="bg-[#FEA923] text-black px-6 py-2 rounded-full font-semibold hover:bg-[#e69710] transition shadow-lg hover:shadow-[#FEA923]/50"
+                    >
+                        Buat Akun
+                    </a>
+                @else
+                    <!-- User Dropdown (Logged In) -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button 
+                            @click="open = !open"
+                            class="flex items-center space-x-2 text-white hover:text-[#FEA923] transition"
+                        >
+                            <div class="w-10 h-10 rounded-full bg-[#FEA923] flex items-center justify-center text-black font-bold">
+                                {{ substr(Auth::user()->nama_lengkap, 0, 1) }}
+                            </div>
+                            <span class="font-semibold">{{ Auth::user()->nama_lengkap }}</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div 
+                            x-show="open"
+                            @click.away="open = false"
+                            class="absolute right-0 mt-2 w-48 bg-gray-900 rounded-lg shadow-xl border border-gray-800 py-2"
+                            style="display: none;"
+                        >
+                            <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-white hover:bg-gray-800 transition">
+                                👤 Profil Saya
+                            </a>
+                            <a href="{{ route('profile.riwayat') }}" class="block px-4 py-2 text-white hover:bg-gray-800 transition">
+                                📜 Riwayat Transaksi
+                            </a>
+                            <hr class="my-2 border-gray-800">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-800 transition">
+                                    🚪 Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endguest
             </div>
 
             <!-- Mobile Menu Button -->
@@ -67,7 +113,7 @@
             </button>
         </div>
 
-        <!-- Mobile Menu (Hidden by default) -->
+        <!-- Mobile Menu -->
         <div id="mobileMenu" class="hidden lg:hidden mt-4 pb-4 bg-black/90 backdrop-blur-md rounded-xl p-4">
             <!-- Mobile Search -->
             <div class="mb-4">
@@ -88,37 +134,66 @@
             <!-- Mobile Navigation -->
             <ul class="space-y-3 mb-4">
                 <li>
-                    <a href="{{ route('home') }}" class="block text-white hover:text-[#FEA923] transition py-2 {{ request()->is('/') ? 'text-[#FEA923]' : '' }}">
+                    <a href="{{ route('home') }}" class="block text-white hover:text-[#FEA923] transition py-2">
                         HOME
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('/film') }}" class="block text-white hover:text-[#FEA923] transition py-2 {{ request()->is('film*') ? 'text-[#FEA923]' : '' }}">
+                    <a href="{{ url('/film') }}" class="block text-white hover:text-[#FEA923] transition py-2">
                         FILM
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('/about') }}" class="block text-white hover:text-[#FEA923] transition py-2 {{ request()->is('about') ? 'text-[#FEA923]' : '' }}">
+                    <a href="{{ url('/about') }}" class="block text-white hover:text-[#FEA923] transition py-2">
                         ABOUT
                     </a>
                 </li>
+                
+                @guest
                 <li>
-                    <a href="{{ url('login') }}" class="block text-white hover:text-[#FEA923] transition py-2 {{ request()->is('login') ? 'text-[#FEA923]' : '' }}">
+                    <a href="{{ route('login') }}" class="block text-white hover:text-[#FEA923] transition py-2">
                         LOGIN
                     </a>
                 </li>
+                @endguest
+                
+                @auth
+                <li>
+                    <a href="{{ route('profile.index') }}" class="block text-white hover:text-[#FEA923] transition py-2">
+                        👤 Profil Saya
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('profile.riwayat') }}" class="block text-white hover:text-[#FEA923] transition py-2">
+                        📜 Riwayat Transaksi
+                    </a>
+                </li>
+                @endauth
             </ul>
 
-            <!-- Mobile Button -->
-            <a 
-                href="{{ url('register') }}" 
-                class="block text-center bg-[#FEA923] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#e69710] transition"
-            >
-                Buat Akun
-            </a>
+            @guest
+                <!-- Mobile Button -->
+                <a 
+                    href="{{ route('register') }}" 
+                    class="block text-center bg-[#FEA923] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#e69710] transition"
+                >
+                    Buat Akun
+                </a>
+            @else
+                <!-- Mobile Logout -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full text-center bg-red-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-700 transition">
+                        Logout
+                    </button>
+                </form>
+            @endauth
         </div>
     </div>
 </nav>
+
+<!-- Alpine.js for Dropdown -->
+<script src="//unpkg.com/alpinejs" defer></script>
 
 <script>
     // Mobile Menu Toggle & Navbar Scroll Effect
@@ -127,14 +202,12 @@
         const mobileMenu = document.getElementById('mobileMenu');
         const navbar = document.getElementById('navbar');
 
-        // Mobile menu toggle
         if (mobileMenuBtn && mobileMenu) {
             mobileMenuBtn.addEventListener('click', function() {
                 mobileMenu.classList.toggle('hidden');
             });
         }
 
-        // Navbar scroll effect - only on homepage
         if (navbar && window.location.pathname === '/') {
             window.addEventListener('scroll', function() {
                 if (window.scrollY > 50) {
@@ -146,7 +219,6 @@
                 }
             });
         } else {
-            // For other pages, always show solid navbar
             navbar.classList.add('bg-black/95', 'backdrop-blur-sm', 'border-b', 'border-gray-900');
         }
     });
