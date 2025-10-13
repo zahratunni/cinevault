@@ -37,21 +37,21 @@
                 @endguest
             </ul>
 
-            <!-- Right Side (Search + Auth) -->
-            <div class="hidden lg:flex items-center space-x-3">
-                <!-- Search -->
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        placeholder="Cari Film" 
-                        class="px-4 py-2 pr-10 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:border-[#FEA923] focus:bg-white/20 transition w-48"
-                    >
-                    <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-[#FEA923]">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </button>
-                </div>
+           <form action="{{ route('films.index') }}" method="GET" class="relative">
+    <input 
+        type="text" 
+        name="search"
+        value="{{ request('search') }}"
+        placeholder="Cari Film (Now Playing / Upcoming)"
+        class="px-4 py-2 pr-10 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:border-[#FEA923] focus:bg-white/20 transition w-64"
+    >
+    <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-[#FEA923]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+    </button>
+</form>
+
 
                 @guest
                     <!-- Button Buat Akun (Guest) -->
@@ -69,9 +69,9 @@
                             class="flex items-center space-x-2 text-white hover:text-[#FEA923] transition"
                         >
                             <div class="w-10 h-10 rounded-full bg-[#FEA923] flex items-center justify-center text-black font-bold">
-                                {{ substr(Auth::user()->nama_lengkap, 0, 1) }}
+                                {{ substr(Auth::user()->username, 0, 1) }}
                             </div>
-                            <span class="font-semibold">{{ Auth::user()->nama_lengkap }}</span>
+                            <span class="font-semibold">{{ Auth::user()->username }}</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
@@ -85,16 +85,16 @@
                             style="display: none;"
                         >
                             <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-white hover:bg-gray-800 transition">
-                                👤 Profil Saya
+                                 Profil Saya
                             </a>
                             <a href="{{ route('profile.riwayat') }}" class="block px-4 py-2 text-white hover:bg-gray-800 transition">
-                                📜 Riwayat Transaksi
+                                 Riwayat Transaksi
                             </a>
                             <hr class="my-2 border-gray-800">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-800 transition">
-                                    🚪 Logout
+                                     Logout
                                 </button>
                             </form>
                         </div>

@@ -27,7 +27,6 @@ class BookingController extends Controller
         // Ambil kursi yang sudah dibooking untuk jadwal ini
         $bookedKursiIds = DetailPemesanan::whereHas('pemesanan', function($query) use ($jadwal_id) {
             $query->where('jadwal_id', $jadwal_id)
-                  // Kursi yang dibooking adalah yang statusnya lunas atau sedang menunggu bayar
                   ->whereIn('status_pemesanan', ['Lunas', 'Menunggu Bayar']); 
         })->pluck('kursi_id')->toArray();
         
@@ -51,7 +50,25 @@ class BookingController extends Controller
         $jadwal = Jadwal::findOrFail($request->jadwal_id);
         $kursiIds = $request->kursi_ids;
         
-        // Re-check: Cek apakah kursi masih available sebelum dipesan
+        // === VALIDASI 1: Jadwal maksimal H+1 (hari ini atau besok) ===
+        $maxDate = now()->addDay()->endOfDay();
+        $jadwalDateTime = \Carbon\Carbon::parse($jadwal->tanggal_tayang . ' ' . $jadwal->jam_mulai);
+        
+        if ($jadwalDateTime->gt($maxDate)) {
+            return back()->with('error', 'Hanya bisa booking untuk hari ini atau besok.');
+        }
+        
+        // === VALIDASI 2: Jadwal belum lewat ===
+        if ($jadwalDateTime->isPast()) {
+            return back()->with('error', 'Jadwal ini sudah lewat. Silakan pilih jadwal lain.');
+        }
+        
+        // === VALIDASI 3: Status jadwal masih Active ===
+        if ($jadwal->status_jadwal !== 'Active') {
+            return back()->with('error', 'Jadwal ini sudah tidak tersedia.');
+        }
+        
+        // === VALIDASI 4: Cek kursi masih available ===
         $bookedKursi = DetailPemesanan::whereHas('pemesanan', function($query) use ($request) {
             $query->where('jadwal_id', $request->jadwal_id)
                   ->whereIn('status_pemesanan', ['Lunas', 'Menunggu Bayar']);
@@ -66,9 +83,9 @@ class BookingController extends Controller
         $hargaPerKursi = $jadwal->harga_reguler;
         $totalBayar = $jumlahKursi * $hargaPerKursi;
         
-        // 1. Buat pemesanan
+        // Buat pemesanan
         $pemesanan = Pemesanan::create([
-            'user_id' => auth()->id() ?? 1, // Gunakan user_id yang sedang login
+            'user_id' => auth()->id(),
             'jadwal_id' => $request->jadwal_id,
             'kode_transaksi' => 'TRX-' . strtoupper(Str::random(10)),
             'jenis_pemesanan' => 'Online',
@@ -78,7 +95,7 @@ class BookingController extends Controller
             'tanggal_pemesanan' => now(),
         ]);
         
-        // 2. Buat detail pemesanan untuk setiap kursi
+        // Buat detail pemesanan untuk setiap kursi
         foreach ($kursiIds as $kursiId) {
             DetailPemesanan::create([
                 'pemesanan_id' => $pemesanan->pemesanan_id,
@@ -87,18 +104,30 @@ class BookingController extends Controller
             ]);
         }
         
+        // Redirect ke halaman success
         return redirect()->route('booking.success', $pemesanan->pemesanan_id)
                          ->with('success', 'Booking berhasil! Silakan lanjutkan pembayaran.');
     }
 
     /**
-     * Menampilkan halaman sukses booking (receipt awal).
+     * Menampilkan halaman sukses booking dengan detail pemesanan.
      */
     public function success($pemesanan_id)
     {
-        $pemesanan = Pemesanan::with(['jadwal.film', 'jadwal.studio', 'detailPemesanans.kursi'])
-                              ->findOrFail($pemesanan_id);
+        // Ambil data pemesanan dengan relasi yang diperlukan
+        $pemesanan = Pemesanan::with([
+            'jadwal.film',
+            'jadwal.studio',
+            'detailPemesanans.kursi',
+            'user'
+        ])->findOrFail($pemesanan_id);
         
-        return view('films.booking-success', compact('pemesanan'));
+        // Pastikan pemesanan ini milik user yang login (security check)
+        if ($pemesanan->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke pemesanan ini.');
+        }
+        
+        // SESUAIKAN DENGAN LOKASI FILE VIEW ANDA
+        return view('films.booking-success', compact('pemesanan')); 
     }
 }

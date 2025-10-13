@@ -84,13 +84,6 @@
                 </p>
             </form>
         </div>
-
-        <!-- Back to Home -->
-        <div class="text-center mt-6">
-            <a href="{{ route('home') }}" class="text-gray-400 hover:text-white transition">
-                ← Kembali ke Home
-            </a>
-        </div>
     </div>
 </div>
 @endsection

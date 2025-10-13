@@ -60,4 +60,13 @@ class PaymentController extends Controller
         return redirect()->route('invoice.show', $pemesanan->pemesanan_id)
                          ->with('success', 'Pembayaran berhasil! Terima kasih.');
     }
+
+    public function show($pemesanan_id)
+{
+    $pemesanan = Pemesanan::with(['jadwal.film', 'jadwal.studio', 'detailPemesanans.kursi'])
+                          ->findOrFail($pemesanan_id);
+
+    return view('films.payment', compact('pemesanan'));
+}
+
 }

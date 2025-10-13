@@ -68,7 +68,7 @@ class AuthController extends Controller
         ]);
 
         // Buat user baru dengan role Customer
-        $user = User::create([
+        User::create([
             'nama_lengkap' => $request->nama_lengkap,
             'username' => $request->username,
             'email' => $request->email,
@@ -77,10 +77,8 @@ class AuthController extends Controller
             'role' => 'Customer',
         ]);
 
-        // Auto login setelah register
-        Auth::login($user);
-
-        return redirect()->route('home')->with('success', 'Registrasi berhasil! Selamat datang di CineVault.');
+        // TIDAK auto login, redirect ke halaman login
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
     }
 
     /**
