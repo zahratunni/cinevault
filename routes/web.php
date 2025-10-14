@@ -7,8 +7,9 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\AdminFilmController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminFilmController;
+use App\Http\Controllers\Admin\AdminJadwalController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -64,31 +65,25 @@ Route::middleware(['auth', 'role:Customer'])->group(function () {
 });
 
 /*
-|--------------------------------------------------------------------------
-| Logout (Semua Role yang Login)
-|--------------------------------------------------------------------------
-*/
-
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-
-/*
-|--------------------------------------------------------------------------
-| Admin Dashboard
+|-------  -------------------------------------------------------------------
+| Admin Routes
 |--------------------------------------------------------------------------
 */
 
-// Ganti route admin dashboard yang lama dengan ini:
 Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('films', AdminFilmController::class);
-    Route::get('/jadwals', function() { return 'Coming Soon'; })->name('jadwals.index');
-    Route::get('/studios', function() { return 'Coming Soon'; })->name('studios.index');
-    Route::get('/kasirs', function() { return 'Coming Soon'; })->name('kasirs.index');
-    Route::get('/pelanggans', function() { return 'Coming Soon'; })->name('pelanggans.index');
+    Route::resource('jadwals', AdminJadwalController::class);
+    
+    // Placeholder routes
+    Route::get('/studios', function() { return redirect()->route('admin.dashboard'); })->name('studios.index');
+    Route::get('/kasirs', function() { return redirect()->route('admin.dashboard'); })->name('kasirs.index');
+    Route::get('/pelanggans', function() { return redirect()->route('admin.dashboard'); })->name('pelanggans.index');
 });
+
 /*
 |--------------------------------------------------------------------------
-| Kasir Dashboard
+| Kasir Routes
 |--------------------------------------------------------------------------
 */
 
@@ -100,7 +95,7 @@ Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->grou
 
 /*
 |--------------------------------------------------------------------------
-| Owner Dashboard
+| Owner Routes
 |--------------------------------------------------------------------------
 */
 
@@ -109,3 +104,11 @@ Route::middleware(['auth', 'role:Owner'])->prefix('owner')->name('owner.')->grou
         return view('owner.dashboard');
     })->name('dashboard');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Logout (Semua Role yang Login)
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');

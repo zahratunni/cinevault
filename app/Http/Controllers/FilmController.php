@@ -47,18 +47,20 @@ class FilmController extends Controller
         return view('films.upcoming', compact('films'));
     }
 
-   public function index(Request $request)
-{
-    $search = $request->input('search');
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
 
-    $films = Film::whereIn('status_tayang', ['Playing Now', 'Upcoming'])
-        ->when($search, function ($query) use ($search) {
-            $query->where('judul', 'like', "%{$search}%");
-        })
-        ->get();
+        $films = Film::whereIn('status_tayang', ['Playing Now', 'Upcoming'])
+            ->when($search, function ($query) use ($search) {
+                // Hanya mencari berdasarkan kolom 'judul'
+                $query->where('judul', 'like', "%{$search}%");
+            })
+            ->get();
 
-    return view('films.index', compact('films', 'search'));
-}
+        // Mengirimkan variabel 'search' ke view agar nilai input pencarian tetap ada
+        return view('films.index', compact('films', 'search'));
+    }
 
 
 }
