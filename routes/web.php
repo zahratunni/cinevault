@@ -10,6 +10,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFilmController;
 use App\Http\Controllers\Admin\AdminJadwalController;
+use App\Http\Controllers\Admin\AdminStudioController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -74,10 +75,8 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('films', AdminFilmController::class);
     Route::resource('jadwals', AdminJadwalController::class);
-    
-    // Placeholder routes
-    Route::get('/studios', function() { return redirect()->route('admin.dashboard'); })->name('studios.index');
-    Route::get('/kasirs', function() { return redirect()->route('admin.dashboard'); })->name('kasirs.index');
+    Route::resource('studios', AdminStudioController::class); 
+    Route::resource('kasirs', AdminKasirController::class); 
     Route::get('/pelanggans', function() { return redirect()->route('admin.dashboard'); })->name('pelanggans.index');
 });
 
