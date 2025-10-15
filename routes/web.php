@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFilmController;
 use App\Http\Controllers\Admin\AdminJadwalController;
 use App\Http\Controllers\Admin\AdminStudioController;
+use App\Http\Controllers\Admin\AdminKasirController;
+use App\Http\Controllers\Admin\AdminPelangganController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,24 +48,30 @@ Route::middleware('guest')->group(function () {
 */
 
 Route::middleware(['auth', 'role:Customer'])->group(function () {
+
     // Booking
     Route::get('/booking/{jadwal_id}/kursi', [BookingController::class, 'create'])->name('booking.kursi'); 
     Route::post('/booking/proses', [BookingController::class, 'store'])->name('booking.store');
     Route::get('/booking/success/{pemesanan_id}', [BookingController::class, 'success'])->name('booking.success');
-    
+
     // Payment
     Route::get('/payment/{pemesanan_id}', [PaymentController::class, 'show'])->name('payment.show');
-    Route::post('/payment/{pemesanan_id}/process', [PaymentController::class, 'store'])->name('payment.process');
-    
+    Route::post('/payment/{pemesanan_id}/process', [PaymentController::class, 'process'])->name('payment.process');
+
+    // ✅ Tambahan route untuk halaman QR + waiting + pengecekan status
+    Route::get('/payment/{pemesanan_id}/waiting', [PaymentController::class, 'waiting'])->name('payment.waiting');
+    Route::get('/payment/{pemesanan_id}/check-status', [PaymentController::class, 'checkStatus'])->name('payment.checkStatus');
+
     // Invoice
     Route::get('/invoice/{pemesanan_id}', [InvoiceController::class, 'show'])->name('invoice.show');
-    
+
     // Profile & Riwayat
     Route::get('/profile', [CustomerController::class, 'profile'])->name('profile.index');
     Route::get('/profile/riwayat', [CustomerController::class, 'riwayat'])->name('profile.riwayat');
     Route::post('/profile/update', [CustomerController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/update-password', [CustomerController::class, 'updatePassword'])->name('profile.password.update');
 });
+
 
 /*
 |-------  -------------------------------------------------------------------
@@ -77,7 +85,9 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('jadwals', AdminJadwalController::class);
     Route::resource('studios', AdminStudioController::class); 
     Route::resource('kasirs', AdminKasirController::class); 
-    Route::get('/pelanggans', function() { return redirect()->route('admin.dashboard'); })->name('pelanggans.index');
+    Route::get('/pelanggans', [AdminPelangganController::class, 'index'])->name('pelanggans.index');
+    Route::get('/pelanggans/{pelanggan}', [AdminPelangganController::class, 'show'])->name('pelanggans.show');
+    Route::delete('/pelanggans/{pelanggan}', [AdminPelangganController::class, 'destroy'])->name('pelanggans.destroy'); 
 });
 
 /*

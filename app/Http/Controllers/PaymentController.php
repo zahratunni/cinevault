@@ -8,65 +8,184 @@ use App\Models\Pemesanan;
 
 class PaymentController extends Controller
 {
-      /**
-     * Menampilkan form/instruksi pembayaran.
+    /**
+     * Menampilkan halaman pilih metode pembayaran
      */
-    public function create($pemesanan_id)
+    public function show($pemesanan_id)
     {
-        $pemesanan = Pemesanan::with(['jadwal.film', 'jadwal.studio', 'detailPemesanans.kursi'])
-                              ->findOrFail($pemesanan_id);
-        
-        // Cek status pemesanan
-        if ($pemesanan->status_pemesanan !== 'Menunggu Bayar') {
-            return redirect()->route('invoice.show', $pemesanan_id)
-                             ->with('info', 'Pemesanan ini sudah dibayar.');
+        $pemesanan = Pemesanan::with([
+            'jadwal.film',
+            'jadwal.studio',
+            'detailPemesanans.kursi',
+            'pembayaran'
+        ])->findOrFail($pemesanan_id);
+
+        // Cek kepemilikan
+        if ($pemesanan->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke pemesanan ini.');
         }
-        
+
+        // Cek status
+        if ($pemesanan->status_pemesanan === 'Lunas') {
+            return redirect()->route('invoice.show', $pemesanan_id)
+                           ->with('info', 'Pemesanan sudah lunas.');
+        }
+
+        if ($pemesanan->status_pemesanan === 'Kadaluarsa') {
+            return redirect()->route('home')
+                           ->with('error', 'Pemesanan sudah kadaluarsa.');
+        }
+
         return view('films.payment', compact('pemesanan'));
     }
 
     /**
-     * Memproses pembayaran dan mengupdate status.
+     * Proses pembayaran - simpan metode dan redirect ke waiting
      */
-    public function store(Request $request, $pemesanan_id)
+    public function process(Request $request, $pemesanan_id)
     {
         $request->validate([
-            'metode_bayar' => 'required|in:Tunai,Debit/Kredit,E-Wallet,Transfer Bank',
-            'nominal_dibayar' => 'required|numeric|min:0',
+            'metode_pembayaran' => 'required|in:DANA,OVO,GoPay,ShopeePay,BCA,BRI,BNI,Mandiri'
         ]);
-        
+
         $pemesanan = Pemesanan::findOrFail($pemesanan_id);
-        
-        // Validasi nominal
-        if ($request->nominal_dibayar < $pemesanan->total_bayar) {
-            return back()->with('error', 'Nominal pembayaran kurang dari total yang harus dibayar.');
+
+        // Cek kepemilikan
+        if ($pemesanan->user_id !== auth()->id()) {
+            abort(403);
         }
-        
-        // 1. Simpan record pembayaran
-        Pembayaran::create([
-             'pemesanan_id' => $pemesanan->pemesanan_id,
-             'metode_bayar' => $request->metode_bayar,
-             'nominal_dibayar' => $request->nominal_dibayar,
-             'tanggal_pembayaran' => now(),
-             'status_pembayaran' => 'Lunas',
-             'user_id' => auth()->id() ?? 1,
-        ]);
-        
-        // 2. Update status pemesanan
-        $pemesanan->update([
-            'status_pemesanan' => 'Lunas',
-        ]);
-        
-        return redirect()->route('invoice.show', $pemesanan->pemesanan_id)
-                         ->with('success', 'Pembayaran berhasil! Terima kasih.');
+
+        // Cek status
+        if ($pemesanan->status_pemesanan !== 'Menunggu Bayar') {
+            return redirect()->route('invoice.show', $pemesanan_id)
+                           ->with('info', 'Pemesanan sudah diproses.');
+        }
+
+        // Cek atau buat pembayaran
+        $pembayaran = $pemesanan->pembayaran;
+
+        if (!$pembayaran) {
+            // Buat pembayaran baru
+            Pembayaran::create([
+                'pemesanan_id' => $pemesanan->pemesanan_id,
+                'user_id' => auth()->id(),
+                'metode_bayar' => 'E-Wallet', // Default
+                'metode_online' => $request->metode_pembayaran,
+                'nominal_dibayar' => $pemesanan->total_bayar,
+                'tanggal_pembayaran' => now(),
+                'status_pembayaran' => 'Pending',
+                'jenis_pembayaran' => 'Online',
+                'status_verifikasi' => 'pending',
+            ]);
+        } else {
+            // Update pembayaran yang ada
+            $pembayaran->update([
+                'metode_online' => $request->metode_pembayaran,
+                'jenis_pembayaran' => 'Online',
+                'status_verifikasi' => 'pending',
+                'verified_by' => null,
+                'verified_at' => null,
+                'catatan_verifikasi' => null,
+            ]);
+        }
+
+        // Redirect ke waiting
+        return redirect()->route('payment.waiting', $pemesanan_id);
     }
 
-    public function show($pemesanan_id)
-{
-    $pemesanan = Pemesanan::with(['jadwal.film', 'jadwal.studio', 'detailPemesanans.kursi'])
-                          ->findOrFail($pemesanan_id);
+    /**
+     * Halaman QR Code + Timer + Waiting
+     */
+    public function waiting($pemesanan_id)
+    {
+        $pemesanan = Pemesanan::with([
+            'jadwal.film',
+            'jadwal.studio',
+            'detailPemesanans.kursi',
+            'pembayaran'
+        ])->findOrFail($pemesanan_id);
 
-    return view('films.payment', compact('pemesanan'));
-}
+        // Cek kepemilikan
+        if ($pemesanan->user_id !== auth()->id()) {
+            abort(403);
+        }
 
+        // Jika belum ada pembayaran
+        if (!$pemesanan->pembayaran) {
+            return redirect()->route('payment.show', $pemesanan_id)
+                           ->with('error', 'Silakan pilih metode pembayaran terlebih dahulu.');
+        }
+
+        // Jika sudah approved
+        if ($pemesanan->pembayaran->status_verifikasi === 'approved') {
+            return redirect()->route('invoice.show', $pemesanan_id)
+                           ->with('success', 'Pembayaran berhasil dikonfirmasi!');
+        }
+
+        // Jika rejected
+        if ($pemesanan->pembayaran->status_verifikasi === 'rejected') {
+            $catatan = $pemesanan->pembayaran->catatan_verifikasi ?? 'Pembayaran ditolak';
+            return redirect()->route('payment.show', $pemesanan_id)
+                           ->with('error', 'Pembayaran ditolak: ' . $catatan);
+        }
+
+        return view('films.payment-waiting', compact('pemesanan'));
+    }
+
+    /**
+     * Check status (AJAX Polling)
+     */
+    public function checkStatus($pemesanan_id)
+    {
+        $pemesanan = Pemesanan::with('pembayaran')->findOrFail($pemesanan_id);
+
+        // Cek kepemilikan
+        if ($pemesanan->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $pembayaran = $pemesanan->pembayaran;
+
+        if (!$pembayaran) {
+            return response()->json([
+                'status' => 'pending',
+                'message' => 'Menunggu konfirmasi...'
+            ]);
+        }
+
+        if ($pembayaran->status_verifikasi === 'approved') {
+            // Update status pemesanan
+            $pemesanan->update(['status_pemesanan' => 'Lunas']);
+
+            return response()->json([
+                'status' => 'approved',
+                'message' => 'Pembayaran berhasil!',
+                'redirect' => route('invoice.show', $pemesanan_id)
+            ]);
+        }
+
+        if ($pembayaran->status_verifikasi === 'rejected') {
+            return response()->json([
+                'status' => 'rejected',
+                'message' => 'Pembayaran ditolak',
+                'redirect' => route('payment.show', $pemesanan_id)
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'pending',
+            'message' => 'Menunggu konfirmasi admin...'
+        ]);
+    }
+
+    // BACKWARD COMPATIBILITY
+    public function create($pemesanan_id)
+    {
+        return $this->show($pemesanan_id);
+    }
+
+    public function store(Request $request, $pemesanan_id)
+    {
+        return $this->process($request, $pemesanan_id);
+    }
 }

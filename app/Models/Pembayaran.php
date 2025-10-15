@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pembayaran extends Model
 {
@@ -13,27 +14,40 @@ class Pembayaran extends Model
     protected $primaryKey = 'pembayaran_id';
 
     protected $fillable = [
-        'pemesanan_id', 'metode_bayar', 'nominal_dibayar', 'tanggal_pembayaran', 
-        'status_pembayaran', 'user_id' // user_id di sini adalah Kasir
+        'pemesanan_id',
+        'user_id',
+        'metode_bayar',
+        'nominal_dibayar',
+        'tanggal_pembayaran',
+        'status_pembayaran',
+        // Kolom baru untuk sistem online
+        'jenis_pembayaran',
+        'metode_online',
+        'status_verifikasi',
+        'verified_by',
+        'verified_at',
+        'catatan_verifikasi',
     ];
 
-    // --- RELASI BELONGS TO (Foreign Key) ---
+    protected $casts = [
+        'tanggal_pembayaran' => 'datetime',
+        'verified_at' => 'datetime',
+    ];
 
-    /**
-     * Pembayaran dimiliki oleh satu Pemesanan (WAJIB diisi).
-     */
+    // --- RELASI ---
+
     public function pemesanan(): BelongsTo
     {
-        // FK di tabel ini adalah 'id_pemesanan', PK di model tujuan juga 'id_pemesanan'
         return $this->belongsTo(Pemesanan::class, 'pemesanan_id', 'pemesanan_id');
     }
 
-    /**
-     * Pembayaran divalidasi oleh satu User (Kasir) (Bisa nullable).
-     */
     public function kasir(): BelongsTo
     {
-        // FK di tabel ini adalah 'id_kasir', PK di model tujuan adalah 'id_user'
-        return $this->belongsTo(User::class, 'user-id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function verifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by', 'user_id');
     }
 }

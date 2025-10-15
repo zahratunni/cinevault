@@ -31,8 +31,8 @@
 
                         <!-- Trigger -->
                         <div id="dropdownTrigger" 
-                             class="flex justify-between items-center bg-gray-900 border border-gray-700 rounded-lg p-3 cursor-pointer hover:border-[#FFA500] transition">
-                            <span id="selectedMethod" class="text-gray-400 text-sm">-- Pilih Metode Pembayaran --</span>
+                             class="flex justify-between items-center bg-gray-900 border-2 border-gray-700 rounded-lg p-4 cursor-pointer hover:border-[#FFA500] transition">
+                            <span id="selectedMethod" class="text-gray-400">-- Pilih Metode Pembayaran --</span>
                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -42,11 +42,11 @@
                         <div id="dropdownMenu" class="hidden mt-2 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden shadow-lg">
                             <div class="p-2">
                                 <p class="text-gray-500 text-xs px-2 mt-1 mb-1">E-Wallet</p>
-                                @foreach (['DANA'=>'dana.jpg','OVO'=>'ovo.png','GoPay'=>'gopay.jpg'] as $name => $img)
-                                    <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 cursor-pointer select-option" 
-                                         data-value="{{ $name }}">
-                                        <img src="{{ asset('payment/'.$img) }}" alt="{{ $name }}" class="w-8 h-8 rounded-md object-contain">
-                                        <span class="text-white text-sm">{{ $name }}</span>
+                                @foreach (['DANA'=>'dana.jpg','OVO'=>'ovo.png','GoPay'=>'gopay.jpg','ShopeePay'=>'shopeepay.png'] as $name => $img)
+                                    <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 cursor-pointer transition select-option" 
+                                         data-value="{{ $name }}" data-img="{{ asset('payment/'.$img) }}">
+                                        <img src="{{ asset('payment/'.$img) }}" alt="{{ $name }}" class="w-10 h-10 rounded-md object-contain">
+                                        <span class="text-white font-semibold">{{ $name }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -54,10 +54,10 @@
                             <div class="p-2">
                                 <p class="text-gray-500 text-xs px-2 mt-1 mb-1">Transfer Bank</p>
                                 @foreach (['BCA'=>'bca.jpg','BRI'=>'logo-bri-biru.png','BNI'=>'bni.png','Mandiri'=>'mandiri.png'] as $name => $img)
-                                    <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 cursor-pointer select-option" 
-                                         data-value="{{ $name }}">
-                                        <img src="{{ asset('payment/'.$img) }}" alt="{{ $name }}" class="w-8 h-8 rounded-md object-contain">
-                                        <span class="text-white text-sm">{{ $name }}</span>
+                                    <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 cursor-pointer transition select-option" 
+                                         data-value="{{ $name }}" data-img="{{ asset('payment/'.$img) }}">
+                                        <img src="{{ asset('payment/'.$img) }}" alt="{{ $name }}" class="w-10 h-10 rounded-md object-contain">
+                                        <span class="text-white font-semibold">{{ $name }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -67,37 +67,21 @@
                     </div>
 
                     <!-- ⚠️ PERINGATAN -->
-                    <div class="bg-red-900/30 border-2 border-red-500 rounded-xl p-4 mb-6">
+                    <div class="bg-yellow-900/30 border-2 border-yellow-500 rounded-xl p-4 mb-6">
                         <div class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                             </svg>
                             <div class="flex-1">
-                                <p class="text-red-400 font-bold mb-2">PENTING SEBELUM BAYAR!</p>
-                                <ul class="text-red-200 text-xs space-y-1">
-                                    <li>• Pastikan metode pembayaran sudah dipilih</li>
-                                    <li>• Scan QR atau transfer sesuai nominal tepat</li>
-                                    <li>• <strong>Jangan tutup halaman setelah scan</strong></li>
-                                    <li>• Klik tombol konfirmasi setelah bayar</li>
+                                <p class="text-yellow-400 font-bold mb-2">Perhatian!</p>
+                                <ul class="text-yellow-200 text-sm space-y-1">
+                                    <li>• QR Code berlaku 5 menit setelah muncul</li>
+                                    <li>• Jangan tutup atau refresh halaman</li>
                                     <li>• Admin akan verifikasi dalam 1-10 menit</li>
+                                    <li>• Pastikan nominal transfer sesuai</li>
                                 </ul>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- ✅ CHECKBOX KONFIRMASI -->
-                    <div class="bg-gray-900 rounded-xl p-4 mb-6 space-y-3">
-                        @foreach ([
-                            'Saya akan melakukan pembayaran sesuai metode yang dipilih',
-                            'Saya setuju tiket tidak dapat dibatalkan/di-refund',
-                            'Data pemesanan sudah benar dan tidak dapat diubah'
-                        ] as $i => $text)
-                        <label class="flex items-start gap-3 cursor-pointer group">
-                            <input type="checkbox" id="checkbox{{ $i+1 }}" 
-                                class="mt-1 w-5 h-5 rounded border-gray-600 text-[#FFA500] focus:ring-[#FFA500]" onchange="checkAll()">
-                            <span class="text-gray-300 text-sm group-hover:text-white">{{ $text }}</span>
-                        </label>
-                        @endforeach
                     </div>
 
                     <!-- Submit Button -->
@@ -106,7 +90,7 @@
                         Lanjutkan Pembayaran
                     </button>
                     <p class="text-gray-500 text-xs text-center mt-3">
-                        Dengan melanjutkan, Anda menyetujui syarat & ketentuan yang berlaku
+                        Pilih metode pembayaran untuk melanjutkan
                     </p>
                 </form>
             </div>
@@ -156,8 +140,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <div>
-                            <p class="text-blue-400 font-bold text-sm mb-1">Catatan:</p>
-                            <p class="text-xs text-blue-200/90">Setelah melanjutkan, Anda akan diarahkan ke halaman instruksi pembayaran dengan QR Code. Admin akan mengkonfirmasi pembayaran dalam 1-10 menit.</p>
+                            <p class="text-blue-400 font-bold text-sm mb-1">Proses Selanjutnya:</p>
+                            <p class="text-xs text-blue-200/90">Setelah pilih metode → QR Code muncul → Scan & bayar → Klik "Saya Sudah Bayar" → Tunggu konfirmasi admin (1-10 menit) → Dapatkan e-ticket</p>
                         </div>
                     </div>
                 </div>
@@ -171,34 +155,40 @@ const trigger = document.getElementById('dropdownTrigger');
 const menu = document.getElementById('dropdownMenu');
 const hiddenInput = document.getElementById('metode_pembayaran');
 const selectedText = document.getElementById('selectedMethod');
+const btnSubmit = document.getElementById('btnSubmit');
 
+// Toggle dropdown
 trigger.addEventListener('click', () => {
     menu.classList.toggle('hidden');
 });
 
+// Close dropdown when click outside
+document.addEventListener('click', (e) => {
+    if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+    }
+});
+
+// Select option
 document.querySelectorAll('.select-option').forEach(opt => {
     opt.addEventListener('click', () => {
         const value = opt.getAttribute('data-value');
+        const imgSrc = opt.getAttribute('data-img');
+        
+        // Set value
         hiddenInput.value = value;
-        selectedText.innerHTML = `<img src="${opt.querySelector('img').src}" class='inline-block w-6 h-6 mr-2 rounded-md'>${value}`;
+        
+        // Update display
+        selectedText.innerHTML = `<img src="${imgSrc}" class='inline-block w-8 h-8 mr-2 rounded-md object-contain'><span class="font-semibold">${value}</span>`;
+        
+        // Enable button
+        btnSubmit.disabled = false;
+        btnSubmit.classList.remove('bg-gray-600', 'text-gray-400', 'cursor-not-allowed');
+        btnSubmit.classList.add('bg-[#FFA500]', 'hover:bg-[#FF8C00]', 'text-black');
+        
+        // Close dropdown
         menu.classList.add('hidden');
     });
 });
-
-function checkAll() {
-    const cb1 = document.getElementById('checkbox1').checked;
-    const cb2 = document.getElementById('checkbox2').checked;
-    const cb3 = document.getElementById('checkbox3').checked;
-    const btn = document.getElementById('btnSubmit');
-    if (cb1 && cb2 && cb3) {
-        btn.disabled = false;
-        btn.classList.remove('bg-gray-600', 'text-gray-400', 'cursor-not-allowed');
-        btn.classList.add('bg-[#FFA500]', 'hover:bg-[#FF8C00]', 'text-black');
-    } else {
-        btn.disabled = true;
-        btn.classList.add('bg-gray-600', 'text-gray-400', 'cursor-not-allowed');
-        btn.classList.remove('bg-[#FFA500]', 'hover:bg-[#FF8C00]', 'text-black');
-    }
-}
 </script>
 @endsection
