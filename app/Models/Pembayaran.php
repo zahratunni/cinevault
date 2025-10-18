@@ -20,34 +20,68 @@ class Pembayaran extends Model
         'nominal_dibayar',
         'tanggal_pembayaran',
         'status_pembayaran',
-        // Kolom baru untuk sistem online
-        'jenis_pembayaran',
-        'metode_online',
-        'status_verifikasi',
+        'bukti_pembayaran',
         'verified_by',
         'verified_at',
-        'catatan_verifikasi',
+        'rejection_reason',
+        'admin_notes'
     ];
 
     protected $casts = [
         'tanggal_pembayaran' => 'datetime',
         'verified_at' => 'datetime',
+        'nominal_dibayar' => 'decimal:2'
     ];
 
-    // --- RELASI ---
-
-    public function pemesanan(): BelongsTo
+    // Relasi ke Pemesanan
+    public function pemesanan()
     {
         return $this->belongsTo(Pemesanan::class, 'pemesanan_id', 'pemesanan_id');
     }
 
-    public function kasir(): BelongsTo
+    // Relasi ke User (Kasir)
+    public function kasir()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
-    public function verifiedBy(): BelongsTo
+    // Relasi ke Admin yang verifikasi
+    public function verifiedBy()
     {
         return $this->belongsTo(User::class, 'verified_by', 'user_id');
+    }
+
+    // Scope untuk filter status
+    public function scopePending($query)
+    {
+        return $query->where('status_pembayaran', 'Pending');
+    }
+
+    public function scopeLunas($query)
+    {
+        return $query->where('status_pembayaran', 'Lunas');
+    }
+
+    public function scopeGagal($query)
+    {
+        return $query->where('status_pembayaran', 'Gagal');
+    }
+
+    // Helper untuk cek apakah sudah diverifikasi
+    public function isVerified()
+    {
+        return !is_null($this->verified_at);
+    }
+
+    // Helper untuk badge status
+    public function getStatusBadge()
+    {
+        $badges = [
+            'Pending' => 'warning',
+            'Lunas' => 'success',
+            'Gagal' => 'danger'
+        ];
+
+        return $badges[$this->status_pembayaran] ?? 'secondary';
     }
 }

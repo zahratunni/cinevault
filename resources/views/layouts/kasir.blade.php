@@ -4,12 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin Panel') - CineVault</title>
+    <title>@yield('title', 'Kasir Panel') - CineVault</title>
     
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Heroicons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     @stack('styles')
@@ -29,72 +26,36 @@
                     </button>
                 </div>
 
-                <!-- Navigation -->
+                <!-- Navigation Kasir -->
                 <nav class="flex-1 px-4 py-6 overflow-y-auto">
                     <ul class="space-y-2">
                         <!-- Dashboard -->
                         <li>
-                            <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.dashboard') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                            <a href="{{ route('kasir.dashboard') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.dashboard') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-home w-5"></i>
                                 <span class="ml-3">Dashboard</span>
                             </a>
                         </li>
-
-                        <!-- Kelola Film -->
-                        <li>
-                            <a href="{{ route('admin.films.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.films.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                                <i class="fas fa-film w-5"></i>
-                                <span class="ml-3">Kelola Film</span>
-                            </a>
-                        </li>
-
-                        <!-- Kelola Jadwal -->
-                        <li>
-                            <a href="{{ route('admin.jadwals.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.jadwals.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                                <i class="fas fa-calendar-alt w-5"></i>
-                                <span class="ml-3">Kelola Jadwal</span>
-                            </a>
-                        </li>
-
-                        <!-- Kelola Studio -->
-                        <li>
-                            <a href="{{ route('admin.studios.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.studios.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                                <i class="fas fa-door-open w-5"></i>
-                                <span class="ml-3">Kelola Studio</span>
-                            </a>
-                        </li>
-
-                        <!-- Kelola Kasir -->
-                        <li>
-                            <a href="{{ route('admin.kasirs.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.kasirs.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                                <i class="fas fa-user-tie w-5"></i>
-                                <span class="ml-3">Kelola Kasir</span>
-                            </a>
-                        </li>
-
-                        <!-- Kelola Pelanggan -->
-                        <li>
-                            <a href="{{ route('admin.pelanggans.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.pelanggans.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                                <i class="fas fa-users w-5"></i>
-                                <span class="ml-3">Kelola Pelanggan</span>
-                            </a>
-                        </li>
-<!-- Verifikasi Pembayaran -->
-<li>
-    <a href="{{ route('admin.verifikasi.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.verifikasi.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-        <i class="fas fa-check-double w-5"></i>
-        <span class="ml-3">Verifikasi Pembayaran</span>
-        @php
-            $pending = \App\Models\Pembayaran::pending()
-                ->whereIn('metode_bayar', ['E-Wallet', 'Transfer Bank'])
-                ->count();
-        @endphp
-        @if($pending > 0)
-            <span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $pending }}</span>
-        @endif
-    </a>
-</li>
                     </ul>
+                    
+                    <!-- Fitur Lain Coming Soon -->
+                    <div class="mt-8 p-4 bg-gray-800 rounded-lg">
+                        <p class="text-xs text-gray-400 font-medium">FITUR LAINNYA</p>
+                        <ul class="space-y-2 mt-3">
+                            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
+                                <i class="fas fa-ticket-alt w-4"></i>
+                                <span class="ml-2">Pemesanan Offline</span>
+                            </li>
+                            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
+                                <i class="fas fa-barcode w-4"></i>
+                                <span class="ml-2">Validasi Tiket</span>
+                            </li>
+                            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
+                                <i class="fas fa-chart-bar w-4"></i>
+                                <span class="ml-2">Laporan</span>
+                            </li>
+                        </ul>
+                    </div>
                 </nav>
 
                 <!-- User Profile -->
@@ -133,12 +94,6 @@
 
                     <!-- Right Side -->
                     <div class="flex items-center space-x-4 ml-auto">
-                        <!-- Notifications -->
-                        <button class="relative text-gray-600 hover:text-gray-900">
-                            <i class="fas fa-bell text-xl"></i>
-                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
-                        </button>
-
                         <!-- User Dropdown -->
                         <div class="relative" id="userDropdown">
                             <button id="userMenuButton" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
@@ -151,10 +106,6 @@
 
                             <!-- Dropdown Menu -->
                             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                                <a href="{{ route('admin.profile.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-user mr-2"></i> Profile
-                                </a>
-                                <hr class="my-2">
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
@@ -170,7 +121,7 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 lg:p-8">
                 
-                <!-- Alert Messages -->
+                <!-- Alert Success -->
                 @if(session('success'))
                     <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                         <span class="block sm:inline">{{ session('success') }}</span>
@@ -180,22 +131,13 @@
                     </div>
                 @endif
 
+                <!-- Alert Error -->
                 @if(session('error'))
                     <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                         <span class="block sm:inline">{{ session('error') }}</span>
                         <button onclick="this.parentElement.remove()" class="absolute top-0 bottom-0 right-0 px-4 py-3">
                             <i class="fas fa-times"></i>
                         </button>
-                    </div>
-                @endif
-
-                @if($errors->any())
-                    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                        <ul class="list-disc list-inside">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
                     </div>
                 @endif
 
@@ -234,7 +176,6 @@
             userMenu.classList.toggle('hidden');
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (!userMenu.classList.contains('hidden') && !userMenuButton.contains(e.target)) {
                 userMenu.classList.add('hidden');

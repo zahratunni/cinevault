@@ -1,60 +1,65 @@
-@extends('layouts.app')
+@extends('layouts.kasir')
+
+@section('title', 'Dashboard - Kasir')
+@section('page-title', 'Dashboard Kasir')
 
 @section('content')
-<div class="min-h-screen bg-gray-100">
-    {{-- Navbar Kasir --}}
-    <nav class="bg-blue-900 text-white p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold">
-                <span class="text-orange-500">CINE</span>VAULT - Kasir Panel
-            </h1>
-            <div class="flex items-center gap-4">
-                <span class="text-sm">👤 {{ Auth::user()->nama_lengkap }}</span>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 text-sm">
-                        Logout
-                    </button>
-                </form>
-            </div>
-        </div>
-    </nav>
-
-    {{-- Content --}}
-    <div class="container mx-auto p-8">
-        {{-- Welcome Card --}}
-        <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
-            <h2 class="text-3xl font-bold mb-4">💰 Dashboard Kasir</h2>
-            <p class="text-gray-600 mb-4">Selamat datang, <strong>{{ Auth::user()->nama_lengkap }}</strong>!</p>
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
-                <p class="text-blue-800 text-sm">
-                    <strong>Role:</strong> Kasir<br>
-                    <strong>Email:</strong> {{ Auth::user()->email }}<br>
-                    <strong>Akses:</strong> Verifikasi Tiket & Transaksi Penjualan
-                </p>
+<div class="space-y-6">
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Card 1: Transaksi Hari Ini -->
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-medium">Transaksi Hari Ini</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $transaksiHariIni }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <i class="fas fa-receipt text-blue-600 text-xl"></i>
+                </div>
             </div>
         </div>
 
-        {{-- Quick Menu --}}
-        <div class="grid md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
-                <div class="text-4xl mb-4">🎫</div>
-                <h3 class="text-xl font-bold mb-2">Scan Tiket</h3>
-                <p class="text-gray-600 text-sm mb-4">Verifikasi tiket customer</p>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm w-full">
-                    Coming Soon
-                </button>
+        <!-- Card 2: Belum Dibayar -->
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-yellow-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-medium">Belum Dibayar</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $pemesananBelumBayar }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                </div>
             </div>
+        </div>
 
-            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
-                <div class="text-4xl mb-4">📊</div>
-                <h3 class="text-xl font-bold mb-2">Laporan Harian</h3>
-                <p class="text-gray-600 text-sm mb-4">Lihat transaksi hari ini</p>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm w-full">
-                    Coming Soon
-                </button>
+        <!-- Card 3: Jadwal Tayang -->
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-medium">Jadwal Tayang Hari Ini</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $jadwalHariIni }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                    <i class="fas fa-film text-purple-600 text-xl"></i>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Welcome Message -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-sm p-8 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-2xl font-bold mb-2">Selamat Datang, {{ $kasir->username }}! 👋</h3>
+                <p class="text-blue-100">Anda login sebagai <strong>{{ $kasir->role }}</strong></p>
+                <p class="text-blue-100 mt-1">Tanggal: <strong>{{ now()->format('d F Y') }}</strong></p>
+            </div>
+            <i class="fas fa-clapperboard text-6xl opacity-20"></i>
+        </div>
+    </div>
 </div>
+
 @endsection

@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\AdminJadwalController;
 use App\Http\Controllers\Admin\AdminStudioController;
 use App\Http\Controllers\Admin\AdminKasirController;
 use App\Http\Controllers\Admin\AdminPelangganController;
+use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Admin\VerifikasiPembayaranController;
+use App\Http\Controllers\Kasir\KasirDashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,16 +82,41 @@ Route::middleware(['auth', 'role:Customer'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:Admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+    // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Films
     Route::resource('films', AdminFilmController::class);
+
+    // Profile
+    Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Jadwal, Studio, Kasir
     Route::resource('jadwals', AdminJadwalController::class);
-    Route::resource('studios', AdminStudioController::class); 
-    Route::resource('kasirs', AdminKasirController::class); 
+    Route::resource('studios', AdminStudioController::class);
+    Route::resource('kasirs', AdminKasirController::class);
+
+    // Pelanggan
     Route::get('/pelanggans', [AdminPelangganController::class, 'index'])->name('pelanggans.index');
     Route::get('/pelanggans/{pelanggan}', [AdminPelangganController::class, 'show'])->name('pelanggans.show');
     Route::delete('/pelanggans/{pelanggan}', [AdminPelangganController::class, 'destroy'])->name('pelanggans.destroy'); 
+
+    // ✅ Verifikasi Pembayaran
+    Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
+        Route::get('/', [VerifikasiPembayaranController::class, 'index'])->name('index');
+        Route::get('/{id}', [VerifikasiPembayaranController::class, 'show'])->name('show');
+        Route::post('/{id}/approve', [VerifikasiPembayaranController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [VerifikasiPembayaranController::class, 'reject'])->name('reject');
+    });
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -97,11 +125,11 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
 */
 
 Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('kasir.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [KasirDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/pemesanan', [KasirPemesananController::class, 'index'])->name('pemesanan.index');
+    Route::post('/pemesanan/store', [KasirPemesananController::class, 'store'])->name('pemesanan.store');
+    Route::get('/kursi-available/{jadwal_id}', [KasirPemesananController::class, 'getKursiAvailable'])->name('kursi.available');
 });
-
 /*
 |--------------------------------------------------------------------------
 | Owner Routes
@@ -112,6 +140,7 @@ Route::middleware(['auth', 'role:Owner'])->prefix('owner')->name('owner.')->grou
     Route::get('/dashboard', function () {
         return view('owner.dashboard');
     })->name('dashboard');
+    
 });
 
 /*
