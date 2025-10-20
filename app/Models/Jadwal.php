@@ -23,6 +23,13 @@ class Jadwal extends Model
     // Ini memungkinkan kita menggunakan $jadwal->is_purchasable di View
     protected $appends = ['is_purchasable']; 
 
+   protected $casts = [
+    'tanggal_tayang' => 'date',
+    'jam_mulai' => 'string',
+    'jam_selesai' => 'string',
+    'harga_reguler' => 'decimal:2',
+];
+
 
     // Jadwal dimiliki oleh satu Film
     public function film(): BelongsTo

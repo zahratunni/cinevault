@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\AdminPelangganController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\VerifikasiPembayaranController;
 use App\Http\Controllers\Kasir\KasirDashboardController;
+use App\Http\Controllers\Kasir\KasirPembayaranController;
+use App\Http\Controllers\Kasir\KasirPemesananController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -126,10 +128,18 @@ Route::middleware(['auth', 'role:Admin'])
 
 Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->group(function () {
     Route::get('/dashboard', [KasirDashboardController::class, 'index'])->name('dashboard');
+    
+    // Pemesanan Offline
     Route::get('/pemesanan', [KasirPemesananController::class, 'index'])->name('pemesanan.index');
     Route::post('/pemesanan/store', [KasirPemesananController::class, 'store'])->name('pemesanan.store');
     Route::get('/kursi-available/{jadwal_id}', [KasirPemesananController::class, 'getKursiAvailable'])->name('kursi.available');
+    
+    // Pembayaran Offline
+    Route::get('/pembayaran/{pemesanan_id}', [KasirPembayaranController::class, 'index'])->name('pembayaran.index');
+    Route::post('/pembayaran/{pemesanan_id}/store', [KasirPembayaranController::class, 'store'])->name('pembayaran.store');
 });
+
+
 /*
 |--------------------------------------------------------------------------
 | Owner Routes

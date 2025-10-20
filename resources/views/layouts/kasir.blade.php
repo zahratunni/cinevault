@@ -27,16 +27,40 @@
                 </div>
 
                 <!-- Navigation Kasir -->
-                <nav class="flex-1 px-4 py-6 overflow-y-auto">
-                    <ul class="space-y-2">
-                        <!-- Dashboard -->
-                        <li>
-                            <a href="{{ route('kasir.dashboard') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.dashboard') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                                <i class="fas fa-home w-5"></i>
-                                <span class="ml-3">Dashboard</span>
-                            </a>
-                        </li>
-                    </ul>
+<nav class="flex-1 px-4 py-6 overflow-y-auto">
+    <ul class="space-y-2">
+        <!-- Dashboard -->
+        <li>
+            <a href="{{ route('kasir.dashboard') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.dashboard') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                <i class="fas fa-home w-5"></i>
+                <span class="ml-3">Dashboard</span>
+            </a>
+        </li>
+
+        <!-- Pemesanan Offline -->
+        <li>
+            <a href="{{ route('kasir.pemesanan.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.pemesanan.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                <i class="fas fa-ticket-alt w-5"></i>
+                <span class="ml-3">Pemesanan Offline</span>
+            </a>
+        </li>
+    </ul>
+
+    <!-- Fitur Lain Coming Soon -->
+    <div class="mt-8 p-4 bg-gray-800 rounded-lg">
+        <p class="text-xs text-gray-400 font-medium">FITUR LAINNYA</p>
+        <ul class="space-y-2 mt-3">
+            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
+                <i class="fas fa-barcode w-4"></i>
+                <span class="ml-2">Validasi Tiket</span>
+            </li>
+            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
+                <i class="fas fa-chart-bar w-4"></i>
+                <span class="ml-2">Laporan</span>
+            </li>
+        </ul>
+    </div>
+</nav>
                     
                     <!-- Fitur Lain Coming Soon -->
                     <div class="mt-8 p-4 bg-gray-800 rounded-lg">
