@@ -28,6 +28,8 @@ class CreatePembayaransTable extends Migration
             $table->decimal('nominal_dibayar', 10, 2);
             $table->dateTime('tanggal_pembayaran');
             $table->enum('status_pembayaran', ['Lunas', 'Gagal', 'Pending'])->default('Pending');
+            $table->string('bukti_pembayaran')->nullable();
+
             
             // Kolom Audit
             $table->timestamps();

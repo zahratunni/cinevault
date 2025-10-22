@@ -30,7 +30,7 @@
                                             <i class="fas fa-building text-gray-400 mr-1"></i> {{ $jadwal->studio->nama_studio }}
                                         </p>
                                         <p class="text-sm text-gray-600">
-                                            <i class="fas fa-calendar text-gray-400 mr-1"></i> {{ $jadwal->tanggal_tayang->format('d M Y') }}
+                                            <i class="fas fa-calendar text-gray-400 mr-1"></i> {{ \Carbon\Carbon::parse($jadwal->tanggal_tayang)->format('d M Y') }}
                                         </p>
                                         <p class="text-sm text-gray-600">
                                             <i class="fas fa-clock text-gray-400 mr-1"></i> {{ $jadwal->jam_mulai }} - {{ $jadwal->jam_selesai }}

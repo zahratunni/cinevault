@@ -79,21 +79,6 @@
                                 <span class="ml-3">Kelola Pelanggan</span>
                             </a>
                         </li>
-<!-- Verifikasi Pembayaran -->
-<li>
-    <a href="{{ route('admin.verifikasi.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.verifikasi.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-        <i class="fas fa-check-double w-5"></i>
-        <span class="ml-3">Verifikasi Pembayaran</span>
-        @php
-            $pending = \App\Models\Pembayaran::pending()
-                ->whereIn('metode_bayar', ['E-Wallet', 'Transfer Bank'])
-                ->count();
-        @endphp
-        @if($pending > 0)
-            <span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $pending }}</span>
-        @endif
-    </a>
-</li>
                     </ul>
                 </nav>
 

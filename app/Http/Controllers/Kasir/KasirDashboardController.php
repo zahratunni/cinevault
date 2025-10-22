@@ -11,36 +11,32 @@ use Illuminate\Http\Request;
 class KasirDashboardController extends Controller
 {
     public function index()
-    {
-        $kasir = auth()->user();
-        $hariIni = now()->toDateString();
+{
+    $kasir = auth()->user();
+    $hariIni = now()->toDateString();
 
-        // Transaksi offline hari ini
-        $transaksiHariIni = Pemesanan::whereDate('tanggal_pemesanan', $hariIni)
-            ->where('jenis_pemesanan', 'Offline')
-            ->count();
+    // Transaksi offline hari ini HANYA DARI KASIR INI
+    $transaksiHariIni = Pemesanan::whereDate('tanggal_pemesanan', $hariIni)
+        ->where('jenis_pemesanan', 'Offline')
+        ->where('user_id', auth()->id()) // Tambahkan ini
+        ->count();
 
-        // Total pendapatan hari ini (yang sudah lunas)
-        $pendapatanHariIni = Pembayaran::whereDate('tanggal_pembayaran', $hariIni)
-            ->where('status_pembayaran', 'Lunas')
-            ->sum('nominal_dibayar');
+    // Pemesanan offline yang belum dibayar DARI KASIR INI
+    $pemesananBelumBayar = Pemesanan::where('status_pemesanan', 'Menunggu Bayar')
+        ->where('jenis_pemesanan', 'Offline')
+        ->where('user_id', auth()->id()) // Tambahkan ini
+        ->count();
 
-        // Pemesanan offline yang belum dibayar
-        $pemesananBelumBayar = Pemesanan::where('status_pemesanan', 'Menunggu Bayar')
-            ->where('jenis_pemesanan', 'Offline')
-            ->count();
+    // Jadwal tayang hari ini (global, semua kasir lihat sama)
+    $jadwalHariIni = Jadwal::whereDate('tanggal_tayang', $hariIni)
+        ->where('status_jadwal', 'Active')
+        ->count();
 
-        // Jadwal tayang hari ini
-        $jadwalHariIni = Jadwal::whereDate('tanggal_tayang', $hariIni)
-            ->where('status_jadwal', 'Active')
-            ->count();
-
-        return view('kasir.dashboard', compact(
-            'kasir',
-            'transaksiHariIni',
-            'pendapatanHariIni',
-            'pemesananBelumBayar',
-            'jadwalHariIni'
-        ));
-    }
+    return view('kasir.dashboard', compact(
+        'kasir',
+        'transaksiHariIni',
+        'pemesananBelumBayar',
+        'jadwalHariIni'
+    ));
+}
 }

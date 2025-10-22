@@ -26,7 +26,7 @@
                     </button>
                 </div>
 
-                <!-- Navigation Kasir -->
+              <!-- Navigation Kasir -->
 <nav class="flex-1 px-4 py-6 overflow-y-auto">
     <ul class="space-y-2">
         <!-- Dashboard -->
@@ -42,6 +42,30 @@
             <a href="{{ route('kasir.pemesanan.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.pemesanan.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                 <i class="fas fa-ticket-alt w-5"></i>
                 <span class="ml-3">Pemesanan Offline</span>
+            </a>
+        </li>
+
+        <!-- TAMBAHAN BARU: Verifikasi Pembayaran Online -->
+        <li>
+            <a href="{{ route('kasir.verifikasi-online.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.verifikasi-online.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                <i class="fas fa-check-double w-5"></i>
+                <span class="ml-3">Verifikasi Pembayaran</span>
+                @php
+                    $pending = \App\Models\Pembayaran::where('status_pembayaran', 'Pending')
+                        ->whereIn('metode_bayar', ['E-Wallet', 'Transfer Bank', 'Online'])
+                        ->count();
+                @endphp
+                @if($pending > 0)
+                    <span class="ml-auto bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full">{{ $pending }}</span>
+                @endif
+            </a>
+        </li>
+
+        <!-- Cetak Tiket -->
+        <li>
+            <a href="{{ route('kasir.tiket.search') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.tiket.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                <i class="fas fa-print w-5"></i>
+                <span class="ml-3">Cetak Tiket</span>
             </a>
         </li>
     </ul>
@@ -60,27 +84,7 @@
             </li>
         </ul>
     </div>
-</nav>
-                    
-                    <!-- Fitur Lain Coming Soon -->
-                    <div class="mt-8 p-4 bg-gray-800 rounded-lg">
-                        <p class="text-xs text-gray-400 font-medium">FITUR LAINNYA</p>
-                        <ul class="space-y-2 mt-3">
-                            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
-                                <i class="fas fa-ticket-alt w-4"></i>
-                                <span class="ml-2">Pemesanan Offline</span>
-                            </li>
-                            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
-                                <i class="fas fa-barcode w-4"></i>
-                                <span class="ml-2">Validasi Tiket</span>
-                            </li>
-                            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
-                                <i class="fas fa-chart-bar w-4"></i>
-                                <span class="ml-2">Laporan</span>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
+</nav>          
 
                 <!-- User Profile -->
                 <div class="px-4 py-4 border-t border-gray-700">

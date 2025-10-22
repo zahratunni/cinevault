@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\VerifikasiPembayaranController;
 use App\Http\Controllers\Kasir\KasirDashboardController;
 use App\Http\Controllers\Kasir\KasirPembayaranController;
 use App\Http\Controllers\Kasir\KasirPemesananController;
+use App\Http\Controllers\Kasir\KasirTiketController;
+use App\Http\Controllers\Kasir\KasirVerifikasiPembayaranOnlineController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,6 +68,7 @@ Route::middleware(['auth', 'role:Customer'])->group(function () {
     // ✅ Tambahan route untuk halaman QR + waiting + pengecekan status
     Route::get('/payment/{pemesanan_id}/waiting', [PaymentController::class, 'waiting'])->name('payment.waiting');
     Route::get('/payment/{pemesanan_id}/check-status', [PaymentController::class, 'checkStatus'])->name('payment.checkStatus');
+    Route::post('/payment/{pembayaran_id}/upload-bukti', [PaymentController::class, 'uploadBukti']) ->name('payment.uploadBukti')->middleware('auth');
 
     // Invoice
     Route::get('/invoice/{pemesanan_id}', [InvoiceController::class, 'show'])->name('invoice.show');
@@ -75,6 +78,7 @@ Route::middleware(['auth', 'role:Customer'])->group(function () {
     Route::get('/profile/riwayat', [CustomerController::class, 'riwayat'])->name('profile.riwayat');
     Route::post('/profile/update', [CustomerController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/update-password', [CustomerController::class, 'updatePassword'])->name('profile.password.update');
+    
 });
 
 
@@ -110,13 +114,6 @@ Route::middleware(['auth', 'role:Admin'])
     Route::get('/pelanggans/{pelanggan}', [AdminPelangganController::class, 'show'])->name('pelanggans.show');
     Route::delete('/pelanggans/{pelanggan}', [AdminPelangganController::class, 'destroy'])->name('pelanggans.destroy'); 
 
-    // ✅ Verifikasi Pembayaran
-    Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
-        Route::get('/', [VerifikasiPembayaranController::class, 'index'])->name('index');
-        Route::get('/{id}', [VerifikasiPembayaranController::class, 'show'])->name('show');
-        Route::post('/{id}/approve', [VerifikasiPembayaranController::class, 'approve'])->name('approve');
-        Route::post('/{id}/reject', [VerifikasiPembayaranController::class, 'reject'])->name('reject');
-    });
 });
 
 
@@ -137,6 +134,19 @@ Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->grou
     // Pembayaran Offline
     Route::get('/pembayaran/{pemesanan_id}', [KasirPembayaranController::class, 'index'])->name('pembayaran.index');
     Route::post('/pembayaran/{pemesanan_id}/store', [KasirPembayaranController::class, 'store'])->name('pembayaran.store');
+
+    // Cetak Tiket
+    Route::get('/search-tiket', [KasirTiketController::class, 'search'])->name('tiket.search');
+    Route::post('/cari-tiket', [KasirTiketController::class, 'cari'])->name('tiket.cari');
+    Route::get('/tiket/{pemesanan_id}', [KasirTiketController::class, 'show'])->name('tiket.show');
+
+    // VERIFIKASI PEMBAYARAN ONLINE
+    Route::prefix('verifikasi-online')->name('verifikasi-online.')->group(function () {
+        Route::get('/', [KasirVerifikasiPembayaranOnlineController::class, 'index'])->name('index');
+        Route::get('/{id}', [KasirVerifikasiPembayaranOnlineController::class, 'show'])->name('show');
+        Route::post('/{id}/approve', [KasirVerifikasiPembayaranOnlineController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [KasirVerifikasiPembayaranOnlineController::class, 'reject'])->name('reject');
+    });// VERIFIKASI PEMBAYARAN ONLINE
 });
 
 

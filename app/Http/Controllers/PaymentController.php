@@ -177,6 +177,37 @@ class PaymentController extends Controller
             'message' => 'Menunggu konfirmasi admin...'
         ]);
     }
+    public function uploadBukti(Request $request, $pembayaran_id)
+{
+    $request->validate([
+        'bukti_pembayaran' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    // Ambil data pembayaran
+    $pembayaran = Pembayaran::findOrFail($pembayaran_id);
+
+    // Cek apakah user yang login memiliki akses ke pembayaran ini
+    if ($pembayaran->user_id !== auth()->id()) {
+        abort(403, 'Anda tidak berhak mengunggah bukti pembayaran ini.');
+    }
+
+    // Simpan file ke storage/public/bukti_pembayaran
+    $path = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
+
+    // Update kolom yang ADA di tabel
+    $pembayaran->update([
+        'metode_bayar' => 'Transfer Bank', // contoh metode manual
+        'status_pembayaran' => 'Pending',  // sesuai ENUM di database
+        'tanggal_pembayaran' => now(),
+        // Simpan path bukti di kolom tambahan (kalau belum ada, tambahkan di migration)
+    ]);
+
+    // 🔔 Catatan: kalau kamu ingin menyimpan nama file bukti, perlu tambah kolom baru:
+    // $table->string('bukti_pembayaran')->nullable();
+
+    return redirect()->back()->with('success', 'Bukti pembayaran berhasil diunggah! Tunggu verifikasi admin.');
+}
+
 
     // BACKWARD COMPATIBILITY
     public function create($pemesanan_id)

@@ -84,7 +84,7 @@
             <div class="pb-4 border-b border-gray-200">
                 <p class="text-xs text-gray-500 font-medium uppercase">Jadwal Tayang</p>
                 <p class="text-sm font-semibold text-gray-900 mt-1">
-                    {{ $pemesanan->jadwal->tanggal_tayang->format('d M Y') }} 
+                    {{ \Carbon\Carbon::parse($pemesanan->jadwal->tanggal_tayang)->format('d M Y') }}
                     {{ $pemesanan->jadwal->jam_mulai }}
                 </p>
             </div>

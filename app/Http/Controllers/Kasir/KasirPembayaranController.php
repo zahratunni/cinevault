@@ -65,8 +65,8 @@ class KasirPembayaranController extends Controller
             $pemesanan->update(['status_pemesanan' => 'Lunas']);
 
             // Redirect ke invoice
-            return redirect()->route('kasir.invoice.show', $pemesanan_id)
-                ->with('success', 'Pembayaran berhasil! Invoice siap ditampilkan.');
+            return redirect()->route('kasir.tiket.show', $pemesanan_id)
+    ->with('success', 'Pembayaran berhasil! Silahkan print tiket.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
