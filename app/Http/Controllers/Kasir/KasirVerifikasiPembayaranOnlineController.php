@@ -67,8 +67,9 @@ class KasirVerifikasiPembayaranOnlineController extends Controller
             'rejection_reason' => null
         ]);
 
+        // ✅ PERBAIKAN: Ganti 'Confirmed' menjadi 'Lunas' agar sesuai dengan ENUM
         $pembayaran->pemesanan->update([
-            'status_pemesanan' => 'Confirmed'
+            'status_pemesanan' => 'Lunas'
         ]);
 
         return redirect()
@@ -94,6 +95,11 @@ class KasirVerifikasiPembayaranOnlineController extends Controller
             'verified_at' => now(),
             'rejection_reason' => $request->rejection_reason,
             'admin_notes' => $request->admin_notes
+        ]);
+
+        // ✅ TAMBAHAN: Update status pemesanan jadi 'Dibatalkan' saat pembayaran ditolak
+        $pembayaran->pemesanan->update([
+            'status_pemesanan' => 'Dibatalkan'
         ]);
 
         return redirect()

@@ -7,6 +7,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFilmController;
 use App\Http\Controllers\Admin\AdminJadwalController;
@@ -69,6 +70,11 @@ Route::middleware(['auth', 'role:Customer'])->group(function () {
     Route::get('/payment/{pemesanan_id}/waiting', [PaymentController::class, 'waiting'])->name('payment.waiting');
     Route::get('/payment/{pemesanan_id}/check-status', [PaymentController::class, 'checkStatus'])->name('payment.checkStatus');
     Route::post('/payment/{pembayaran_id}/upload-bukti', [PaymentController::class, 'uploadBukti']) ->name('payment.uploadBukti')->middleware('auth');
+// 🔥 MIDTRANS ROUTES (TAMBAHKAN INI)
+    Route::get('/payment/midtrans/{pemesanan_id}', [App\Http\Controllers\MidtransController::class, 'createTransaction'])
+        ->name('midtrans.create');
+    Route::get('/payment/midtrans/finish/{pemesanan_id}', [App\Http\Controllers\MidtransController::class, 'finish'])
+        ->name('midtrans.finish');
 
     // Invoice
     Route::get('/invoice/{pemesanan_id}', [InvoiceController::class, 'show'])->name('invoice.show');
@@ -162,6 +168,9 @@ Route::middleware(['auth', 'role:Owner'])->prefix('owner')->name('owner.')->grou
     })->name('dashboard');
     
 });
+
+Route::post('/payment/midtrans/callback', [App\Http\Controllers\MidtransController::class, 'callback'])
+    ->name('midtrans.callback');
 
 /*
 |--------------------------------------------------------------------------
