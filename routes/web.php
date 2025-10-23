@@ -66,15 +66,22 @@ Route::middleware(['auth', 'role:Customer'])->group(function () {
     Route::get('/payment/{pemesanan_id}', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/{pemesanan_id}/process', [PaymentController::class, 'process'])->name('payment.process');
 
+    /*
     // ✅ Tambahan route untuk halaman QR + waiting + pengecekan status
     Route::get('/payment/{pemesanan_id}/waiting', [PaymentController::class, 'waiting'])->name('payment.waiting');
     Route::get('/payment/{pemesanan_id}/check-status', [PaymentController::class, 'checkStatus'])->name('payment.checkStatus');
     Route::post('/payment/{pembayaran_id}/upload-bukti', [PaymentController::class, 'uploadBukti']) ->name('payment.uploadBukti')->middleware('auth');
+    */
+
 // 🔥 MIDTRANS ROUTES (TAMBAHKAN INI)
     Route::get('/payment/midtrans/{pemesanan_id}', [App\Http\Controllers\MidtransController::class, 'createTransaction'])
         ->name('midtrans.create');
     Route::get('/payment/midtrans/finish/{pemesanan_id}', [App\Http\Controllers\MidtransController::class, 'finish'])
         ->name('midtrans.finish');
+
+        // ✅ TAMBAH ROUTE INI
+    Route::get('/payment/confirm/{pemesanan_id}', [App\Http\Controllers\MidtransController::class, 'manualCallback'])
+        ->name('midtrans.confirm');
 
     // Invoice
     Route::get('/invoice/{pemesanan_id}', [InvoiceController::class, 'show'])->name('invoice.show');
@@ -146,6 +153,7 @@ Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::post('/cari-tiket', [KasirTiketController::class, 'cari'])->name('tiket.cari');
     Route::get('/tiket/{pemesanan_id}', [KasirTiketController::class, 'show'])->name('tiket.show');
 
+    /*
     // VERIFIKASI PEMBAYARAN ONLINE
     Route::prefix('verifikasi-online')->name('verifikasi-online.')->group(function () {
         Route::get('/', [KasirVerifikasiPembayaranOnlineController::class, 'index'])->name('index');
@@ -153,6 +161,7 @@ Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->grou
         Route::post('/{id}/approve', [KasirVerifikasiPembayaranOnlineController::class, 'approve'])->name('approve');
         Route::post('/{id}/reject', [KasirVerifikasiPembayaranOnlineController::class, 'reject'])->name('reject');
     });// VERIFIKASI PEMBAYARAN ONLINE
+    */
 });
 
 

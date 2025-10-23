@@ -45,22 +45,6 @@
             </a>
         </li>
 
-        <!-- TAMBAHAN BARU: Verifikasi Pembayaran Online -->
-        <li>
-            <a href="{{ route('kasir.verifikasi-online.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.verifikasi-online.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                <i class="fas fa-check-double w-5"></i>
-                <span class="ml-3">Verifikasi Pembayaran</span>
-                @php
-                    $pending = \App\Models\Pembayaran::where('status_pembayaran', 'Pending')
-                        ->whereIn('metode_bayar', ['E-Wallet', 'Transfer Bank', 'Online'])
-                        ->count();
-                @endphp
-                @if($pending > 0)
-                    <span class="ml-auto bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full">{{ $pending }}</span>
-                @endif
-            </a>
-        </li>
-
         <!-- Cetak Tiket -->
         <li>
             <a href="{{ route('kasir.tiket.search') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.tiket.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">

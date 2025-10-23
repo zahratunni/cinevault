@@ -203,4 +203,54 @@ class MidtransController extends Controller
             'status_pemesanan' => 'Dibatalkan'
         ]);
     }
+
+    /**
+ * Manual callback untuk konfirmasi pembayaran
+ * (Solusi untuk testing di localhost)
+ */
+public function manualCallback($pemesanan_id)
+{
+    $pemesanan = Pemesanan::with('pembayaran')->findOrFail($pemesanan_id);
+    
+    // Cek kepemilikan
+    if ($pemesanan->user_id !== auth()->id()) {
+        abort(403, 'Anda tidak memiliki akses ke pemesanan ini.');
+    }
+
+    $pembayaran = $pemesanan->pembayaran;
+
+    if (!$pembayaran) {
+        return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
+    }
+
+    // Cek apakah sudah lunas
+    if ($pembayaran->status_pembayaran === 'Lunas') {
+        return redirect()->route('invoice.show', $pemesanan_id)
+            ->with('info', 'Pembayaran sudah lunas sebelumnya.');
+    }
+
+    // Update status pembayaran
+    $pembayaran->update([
+        'status_pembayaran' => 'Lunas',
+        'status_verifikasi' => 'approved',
+        'payment_type' => 'midtrans_manual_confirm',
+        'verified_at' => now(),
+        'tanggal_pembayaran' => now(),
+    ]);
+
+    // Update status pemesanan
+    $pemesanan->update([
+        'status_pemesanan' => 'Lunas'
+    ]);
+
+    // Log untuk tracking
+    \Log::info('Manual Payment Confirmation', [
+        'pemesanan_id' => $pemesanan_id,
+        'transaction_id' => $pembayaran->transaction_id,
+        'user_id' => auth()->id()
+    ]);
+
+    return redirect()->route('invoice.show', $pemesanan_id)
+        ->with('success', 'Pembayaran berhasil dikonfirmasi! Selamat menonton! 🎉');
+}
 }

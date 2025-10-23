@@ -24,7 +24,15 @@ class Pembayaran extends Model
         'verified_by',
         'verified_at',
         'rejection_reason',
-        'admin_notes'
+        'admin_notes',
+        // 🔥 KOLOM MIDTRANS
+        'snap_token',
+        'transaction_id',
+        'payment_type',
+        'metode_online',
+        'jenis_pembayaran',
+        'status_verifikasi',
+        'catatan_verifikasi'
     ];
 
     protected $casts = [

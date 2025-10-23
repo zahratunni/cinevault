@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\Auth;
 
 class KasirVerifikasiPembayaranOnlineController extends Controller
 {
+    /*
+     * ========================================================================
+     * CONTROLLER INI SUDAH TIDAK DIPAKAI (DIGANTI MIDTRANS AUTO-VERIFY)
+     * ========================================================================
+     * 
+     * Sebelumnya: Kasir harus verifikasi manual pembayaran online customer
+     * Sekarang: Midtrans otomatis verifikasi via webhook callback
+     * 
+     * Controller ini dipertahankan (dikomen) untuk jaga-jaga kalau suatu saat
+     * dibutuhkan lagi sistem verifikasi manual sebagai backup.
+     * 
+     * Terakhir dipakai: 23 Oktober 2025
+     * Diganti dengan: MidtransController (auto-verify via webhook)
+     * ========================================================================
+     */
+
+    /*
     public function index(Request $request)
     {
         $status = $request->get('status', 'Pending');
@@ -67,7 +84,6 @@ class KasirVerifikasiPembayaranOnlineController extends Controller
             'rejection_reason' => null
         ]);
 
-        // ✅ PERBAIKAN: Ganti 'Confirmed' menjadi 'Lunas' agar sesuai dengan ENUM
         $pembayaran->pemesanan->update([
             'status_pemesanan' => 'Lunas'
         ]);
@@ -97,7 +113,6 @@ class KasirVerifikasiPembayaranOnlineController extends Controller
             'admin_notes' => $request->admin_notes
         ]);
 
-        // ✅ TAMBAHAN: Update status pemesanan jadi 'Dibatalkan' saat pembayaran ditolak
         $pembayaran->pemesanan->update([
             'status_pemesanan' => 'Dibatalkan'
         ]);
@@ -106,4 +121,5 @@ class KasirVerifikasiPembayaranOnlineController extends Controller
             ->route('kasir.verifikasi-online.index')
             ->with('warning', 'Pembayaran ditolak. Customer dapat upload bukti ulang.');
     }
+    */
 }
