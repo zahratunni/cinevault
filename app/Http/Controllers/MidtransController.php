@@ -160,16 +160,26 @@ class MidtransController extends Controller
      * Halaman finish setelah pembayaran
      */
     public function finish($pemesanan_id)
-    {
-        $pemesanan = Pemesanan::with('pembayaran')->findOrFail($pemesanan_id);
+{
+    $pemesanan = Pemesanan::with('pembayaran')->findOrFail($pemesanan_id);
 
-        // Cek kepemilikan
-        if ($pemesanan->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        return view('films.payment-finish', compact('pemesanan'));
+    // Cek kepemilikan pemesanan
+    if (auth()->check() && $pemesanan->user_id !== auth()->id()) {
+        abort(403, 'Anda tidak memiliki akses ke halaman ini.');
     }
+
+    // Cek apakah pembayaran sudah tersedia
+    $pembayaran = $pemesanan->pembayaran;
+
+    if ($pembayaran) {
+        // ✅ TAMBAHKAN PARAMETER pemesanan_id
+      return redirect()->route('invoice.show', $pemesanan->pemesanan_id)
+                         ->with('success', 'Pembayaran berhasil! Berikut invoice Anda.');
+    }
+
+    return redirect()->route('home')->with('error', 'Data pembayaran belum ditemukan.');
+}
+
 
     /**
      * Helper: Update ke status sukses

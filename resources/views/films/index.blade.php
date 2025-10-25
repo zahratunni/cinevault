@@ -51,9 +51,9 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-[#FEA923] font-semibold">{{ $film->genre }}</span>
                                <a href="{{ route('film.show', $film->id) }}" 
-   class="text-gray-300 hover:text-[#FEA923] text-sm font-medium">
-   Lihat Detail →
-</a>
+                                class="text-gray-300 hover:text-[#FEA923] text-sm font-medium">
+                                    Lihat Detail →
+                                </a>
 
                             </div>
                         </div>

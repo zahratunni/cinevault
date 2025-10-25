@@ -1,160 +1,160 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="bg-black min-h-screen pt-24 md:pt-32 pb-20">
-    <div class="max-w-4xl mx-auto px-4 md:px-6">
+<div class="bg-gray-100 min-h-screen pt-12 pb-8 font-sans antialiased"> {{-- Mengurangi padding atas dan bawah --}}
+    <div class="max-w-2xl mx-auto px-3 sm:px-4 lg:px-6"> {{-- Mengurangi max-width menjadi 2xl --}}
         
         <!-- Success Header -->
-        <div class="text-center mb-8 md:mb-12">
-            <div class="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-green-500 rounded-full mb-4 md:mb-5">
-                <svg class="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="text-center mt-6 mb-7"> {{-- Mengurangi margin --}}
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-[#007BFF] rounded-full mb-2 shadow-md"> {{-- Ukuran ikon sukses sedikit diperkecil --}}
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                 </svg>
             </div>
-            <h1 class="text-2xl md:text-4xl font-bold text-white mb-2 md:mb-3">Pembayaran Berhasil</h1>
-            <p class="text-gray-400 text-sm md:text-lg">Tiket Anda telah dikonfirmasi. Selamat menonton!</p>
+            <h1 class="text-2xl font-bold text-[#2C3E50] mb-1">Pembayaran Berhasil!</h1> {{-- Ukuran font H1 diperkecil --}}
+            <p class="text-gray-600 text-sm">Tiket Anda telah dikonfirmasi. Selamat menikmati film.</p> {{-- Ukuran font P diperkecil --}}
         </div>
 
-        <!-- Invoice Card -->
-        <div class="bg-[#1a1a1a] rounded-xl md:rounded-2xl shadow-2xl border border-gray-800 overflow-hidden mb-6 md:mb-8">
+        <!-- Invoice Card - Lebih Compact -->
+        <div class="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden mb-6"> {{-- Mengurangi margin bawah --}}
             
-            <!-- Header -->
-            <div class="bg-green-600 text-white px-6 py-5 md:px-8 md:py-6">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-xs uppercase tracking-widest mb-2 font-bold">Invoice</p>
-                        <p class="text-xl md:text-3xl font-black tracking-wider">{{ $pemesanan->kode_transaksi }}</p>
-                    </div>
-                    <div class="bg-white px-4 py-2 rounded-lg">
-                        <p class="text-green-600 font-black text-sm">{{ $pemesanan->status_pemesanan }}</p>
-                    </div>
+            <!-- Header dengan Kode Booking -->
+            <div class="bg-gradient-to-r from-[#0056B3] to-[#007BFF] text-white px-5 py-4 text-center"> {{-- Mengurangi padding --}}
+                <p class="text-xs uppercase tracking-wider opacity-90 mb-1">Invoice Pembelian Tiket</p> {{-- Ukuran font diperkecil --}}
+                <p class="text-xl font-extrabold tracking-wide mb-2">{{ $pemesanan->kode_transaksi }}</p> {{-- Ukuran font diperkecil --}}
+                <div class="inline-block bg-white/20 px-3 py-1 rounded-full"> {{-- Mengurangi padding --}}
+                    <p class="text-white text-xs font-semibold">✓ {{ $pemesanan->status_pemesanan }}</p> {{-- Ukuran font diperkecil --}}
                 </div>
             </div>
 
-            <!-- Body -->
-            <div class="p-6 md:p-8 space-y-6 md:space-y-8">
+            <!-- Body Invoice -->
+            <div class="p-5 space-y-6"> {{-- Mengurangi padding dan space-y --}}
                 
-                <!-- Film Details -->
+                <!-- Film Details Section -->
                 <div>
-                    <h2 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 md:mb-5">Detail Film</h2>
-                    <div class="flex flex-col sm:flex-row gap-4 md:gap-6">
+                    <h2 class="text-xs font-bold text-[#007BFF] uppercase tracking-wider mb-3 flex items-center gap-2"> {{-- Ukuran font heading diperkecil --}}
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+                        </svg>
+                        Detail Film
+                    </h2>
+                    <div class="flex gap-3 items-start border border-gray-200 rounded-lg p-3 bg-gray-50"> {{-- Mengurangi padding dan gap --}}
                         <img src="{{ asset($pemesanan->jadwal->film->poster_url) }}" 
                              alt="{{ $pemesanan->jadwal->film->judul }}" 
-                             class="w-24 h-32 md:w-28 md:h-40 object-cover rounded-lg border border-gray-700 mx-auto sm:mx-0">
-                        <div class="flex-1">
-                            <h3 class="text-lg md:text-xl font-bold text-white mb-3 md:mb-5">{{ $pemesanan->jadwal->film->judul }}</h3>
-                            <div class="space-y-2 md:space-y-3 text-sm md:text-base">
-                                <div class="flex flex-col sm:flex-row">
-                                    <span class="text-gray-500 sm:w-24 font-medium mb-1 sm:mb-0">Studio</span>
-                                    <span class="text-white font-semibold">{{ $pemesanan->jadwal->studio->nama_studio }}</span>
-                                </div>
-                                <div class="flex flex-col sm:flex-row">
-                                    <span class="text-gray-500 sm:w-24 font-medium mb-1 sm:mb-0">Tanggal</span>
-                                    <span class="text-white font-semibold">{{ \Carbon\Carbon::parse($pemesanan->jadwal->tanggal_tayang)->format('d F Y') }}</span>
-                                </div>
-                                <div class="flex flex-col sm:flex-row">
-                                    <span class="text-gray-500 sm:w-24 font-medium mb-1 sm:mb-0">Waktu</span>
-                                    <span class="text-white font-semibold">{{ \Carbon\Carbon::parse($pemesanan->jadwal->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($pemesanan->jadwal->jam_selesai)->format('H:i') }} WIB</span>
-                                </div>
+                             class="w-20 h-32 object-cover rounded-md flex-shrink-0 shadow-sm"> {{-- Ukuran poster diperkecil --}}
+                        <div class="flex-1 text-gray-700">
+                            <h3 class="text-lg font-bold text-[#2C3E50] mb-1">{{ $pemesanan->jadwal->film->judul }}</h3> {{-- Ukuran font H3 diperkecil --}}
+                            <div class="space-y-0.5 text-xs"> {{-- Ukuran font detail diperkecil dan space-y dikurangi --}}
+                                <p class="flex items-center gap-1.5"><i class="fas fa-desktop text-[#FFC107] text-sm"></i> <strong>Studio:</strong> {{ $pemesanan->jadwal->studio->nama_studio }}</p>
+                                <p class="flex items-center gap-1.5"><i class="fas fa-calendar-alt text-[#FFC107] text-sm"></i> <strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($pemesanan->jadwal->tanggal_tayang)->format('d F Y') }}</p>
+                                <p class="flex items-center gap-1.5"><i class="fas fa-clock text-[#FFC107] text-sm"></i> <strong>Waktu:</strong> {{ \Carbon\Carbon::parse($pemesanan->jadwal->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($pemesanan->jadwal->jam_selesai)->format('H:i') }} WIB</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <hr class="border-gray-800">
+                <hr class="border-gray-200">
 
-                <!-- Seats -->
+                <!-- Seats Section -->
                 <div>
-                    <h2 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 md:mb-5">Kursi</h2>
-                    <div class="flex flex-wrap gap-2 md:gap-3">
+                    <h2 class="text-xs font-bold text-[#007BFF] uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Kursi Anda
+                    </h2>
+                    <div class="flex flex-wrap gap-1.5 text-gray-800"> {{-- Mengurangi gap --}}
                         @foreach($pemesanan->detailPemesanans as $detail)
-                        <span class="bg-[#FFA500] text-black px-4 py-2 md:px-5 md:py-3 rounded-lg text-sm md:text-base font-bold">
+                        <span class="bg-[#FFC107] text-[#2C3E50] px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm"> {{-- Mengurangi padding dan ukuran font --}}
                             {{ $detail->kursi->kode_kursi }}
                         </span>
                         @endforeach
                     </div>
                 </div>
 
-                <hr class="border-gray-800">
+                <hr class="border-gray-200">
 
-                <!-- Payment Info -->
-                @if($pemesanan->pembayaran)
+                <!-- Payment Summary Section -->
                 <div>
-                    <h2 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 md:mb-5">Informasi Pembayaran</h2>
-                    <div class="bg-gray-900 rounded-lg p-4 space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Metode Pembayaran</span>
-                            <span class="text-white font-semibold">{{ $pemesanan->pembayaran->metode_bayar }}</span>
+                    <h2 class="text-xs font-bold text-[#007BFF] uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        Rincian Pembayaran
+                    </h2>
+                    <div class="bg-gray-50 rounded-lg p-3 space-y-2 border border-gray-200"> {{-- Mengurangi padding dan space-y --}}
+                        <div class="flex justify-between text-sm text-gray-700">
+                            <span>{{ $pemesanan->detailPemesanans->count() }} x Tiket @ Rp {{ number_format($pemesanan->jadwal->harga_reguler, 0, ',', '.') }}</span>
+                            <span class="font-semibold">Rp {{ number_format($pemesanan->harga_dasar_total, 0, ',', '.') }}</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Tanggal Pembayaran</span>
-                            <span class="text-white font-semibold">{{ \Carbon\Carbon::parse($pemesanan->pembayaran->tanggal_pembayaran)->format('d/m/Y H:i') }}</span>
+                        @if($pemesanan->pembayaran)
+                        <div class="flex justify-between text-xs text-gray-600">
+                            <span>Metode Pembayaran</span>
+                            <span>{{ $pemesanan->pembayaran->metode_bayar }}</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Nominal Dibayar</span>
-                            <span class="text-white font-semibold">Rp {{ number_format($pemesanan->pembayaran->nominal_dibayar, 0, ',', '.') }}</span>
+                        <div class="flex justify-between text-xs text-gray-600">
+                            <span>Waktu Pembayaran</span>
+                            <span>{{ \Carbon\Carbon::parse($pemesanan->pembayaran->tanggal_pembayaran)->format('d/m/Y H:i') }} WIB</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Status</span>
-                            <span class="text-green-500 font-bold">{{ $pemesanan->pembayaran->status_pembayaran }}</span>
+                        @endif
+                        <hr class="border-gray-200">
+                        <div class="flex justify-between items-center pt-1.5"> {{-- Mengurangi padding top --}}
+                            <span class="text-base font-bold text-[#2C3E50]">Total Dibayar</span> {{-- Ukuran font total dibayar diperkecil --}}
+                            <span class="text-xl font-extrabold text-[#007BFF]">Rp {{ number_format($pemesanan->total_bayar, 0, ',', '.') }}</span> {{-- Ukuran font total dibayar diperkecil --}}
                         </div>
                     </div>
                 </div>
 
-                <hr class="border-gray-800">
-                @endif
+            </div>
 
-                <!-- Payment Summary -->
-                <div>
-                    <h2 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 md:mb-5">Rincian Pembayaran</h2>
-                    <div class="space-y-3 md:space-y-4 text-sm md:text-base">
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">{{ $pemesanan->detailPemesanans->count() }} x Tiket</span>
-                            <span class="text-white font-semibold">Rp {{ number_format($pemesanan->jadwal->harga_reguler, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between pt-3 md:pt-4 border-t border-gray-800">
-                            <span class="text-lg md:text-xl font-bold text-white">Total Dibayar</span>
-                            <span class="text-xl md:text-2xl font-black text-green-500">Rp {{ number_format($pemesanan->total_bayar, 0, ',', '.') }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <hr class="border-gray-800">
-
-                <!-- QR Code Placeholder -->
-                <div>
-                    <h2 class="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 md:mb-5">QR Code Check-in</h2>
-                    <div class="bg-white p-6 rounded-lg text-center">
-                        <div class="w-48 h-48 mx-auto bg-gray-200 rounded-lg flex items-center justify-center">
-                            <p class="text-gray-600 font-semibold">QR Code<br>{{ $pemesanan->kode_transaksi }}</p>
-                        </div>
-                        <p class="text-xs text-gray-600 mt-4">Tunjukkan QR Code ini saat check-in</p>
+            <!-- Footer Info -->
+            <div class="bg-[#EBF7FF] border-t border-[#007BFF]/30 px-5 py-4"> {{-- Mengurangi padding --}}
+                <div class="flex items-start gap-3">
+                    <svg class="w-4 h-4 text-[#007BFF] flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"> {{-- Ukuran ikon diperkecil --}}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="flex-1 text-gray-700">
+                        <p class="font-bold text-sm mb-1.5">Penting:</p> {{-- Ukuran font diperkecil --}}
+                        <ul class="text-xs space-y-1">
+                            <li>• Mohon tukarkan tiket Anda di kasir dengan menunjukkan <strong>Kode Booking</strong> ini.</li>
+                            <li>• Datang <strong>15 menit</strong> sebelum jadwal tayang.</li>
+                            <li>• Simpan invoice ini sebagai bukti pembelian yang sah.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-4 rounded-xl transition-all">
-                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                </svg>
-                Cetak Tiket
-            </button>
-            <a href="{{ route('home') }}" class="bg-[#FFA500] hover:bg-[#FF8C00] text-black font-bold py-4 rounded-xl transition-all text-center">
-                Kembali ke Beranda
+        <!-- Action Buttons - Hanya tombol Riwayat Pemesanan -->
+        <div class="grid grid-cols-1 gap-4 mb-4"> {{-- Hanya satu kolom --}}
+            <a href="{{ route('profile.riwayat') }}" class="bg-gray-200 hover:bg-gray-300 text-[#2C3E50] font-semibold py-3 rounded-lg transition-all text-center flex items-center justify-center gap-2">
+                <i class="fas fa-history"></i>
+                Riwayat Pemesanan
             </a>
+            {{-- Tombol Kembali ke Beranda dihilangkan --}}
         </div>
 
-        <p class="text-center text-xs md:text-sm text-gray-500">Simpan invoice ini sebagai bukti pembelian tiket</p>
+        <p class="text-center text-xs text-gray-500 mt-4"> {{-- Mengurangi margin top --}}
+            <svg class="w-3 h-3 inline-block mr-1 text-[#007BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            Transaksi Anda aman & terenkripsi
+        </p>
 
     </div>
 </div>
 
+<!-- Notifikasi Success -->
 @if(session('success'))
+<div class="fixed top-16 right-4 bg-[#007BFF] text-white px-4 py-2.5 rounded-lg shadow-lg z-50 animate-bounce text-sm"> {{-- Mengurangi padding dan top --}}
+    <p class="font-bold">✓ {{ session('success') }}</p>
+</div>
 <script>
-    alert('{{ session('success') }}');
+    setTimeout(() => {
+        const notification = document.querySelector('.fixed.top-16');
+        if (notification) notification.remove();
+    }, 3000);
 </script>
 @endif
 @endsection

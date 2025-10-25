@@ -24,6 +24,14 @@
             .ticket-item:last-child {
                 page-break-after: auto;
             }
+            /* ✅ Show print version */
+            #print-version {
+                display: block !important;
+            }
+            /* ✅ Hide screen version */
+            #screen-version {
+                display: none !important;
+            }
         }
         
         .ticket-card {
@@ -51,6 +59,19 @@
             </button>
         </div>
         
+        <!-- ✅ Alert jika baru dari pembayaran -->
+        @if(session('success'))
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
+                    <p class="text-xs text-green-600 mt-1">Silakan print tiket untuk customer</p>
+                </div>
+            </div>
+        </div>
+        @endif
+        
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
             <p class="text-sm text-blue-800">
                 <i class="fas fa-info-circle mr-2"></i>
@@ -59,8 +80,8 @@
         </div>
     </div>
 
-    <!-- Tiket Container -->
-    <div class="no-print max-w-4xl mx-auto px-4">
+    <!-- Tiket Container (Screen Version) -->
+    <div id="screen-version" class="no-print max-w-4xl mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-8">
             @foreach($pemesanan->detailPemesanans as $detail)
             <div class="ticket-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-300">
@@ -139,7 +160,7 @@
     </div>
 
     <!-- Print Version (Hidden on screen, visible when printing) -->
-    <div style="display: none;">
+    <div id="print-version" style="display: none;">
         @foreach($pemesanan->detailPemesanans as $detail)
         <div class="ticket-item" style="padding: 20px;">
             <div class="ticket-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-300">
@@ -212,6 +233,29 @@
         </div>
         @endforeach
     </div>
+
+    <!-- ✅ Auto Print Script -->
+    <script>
+        // Auto print jika dari pembayaran
+        @if(session('auto_print'))
+        window.addEventListener('load', function() {
+            // Delay 500ms agar halaman fully loaded
+            setTimeout(function() {
+                if(confirm('✅ Pembayaran berhasil!\n\nCetak {{ $pemesanan->detailPemesanans->count() }} tiket sekarang?')) {
+                    window.print();
+                }
+            }, 500);
+        });
+        @endif
+
+        // Keyboard shortcut: Ctrl+P or Cmd+P
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+    </script>
 
 </body>
 </html>

@@ -22,15 +22,19 @@ public function riwayat()
 {
     $user = auth()->user();
 
-    // Ambil semua riwayat pemesanan milik user ini
-    $riwayat = Pemesanan::with(['jadwal', 'pembayaran'])
-                ->where('user_id', $user->user_id)
-                ->orderBy('tanggal_pemesanan', 'desc')
-                ->get();
+    // 🔥 Ambil riwayat dengan relasi lengkap
+    $riwayat = Pemesanan::with([
+        'jadwal.film',
+        'jadwal.studio',
+        'pembayaran',
+        'detailPemesanans.kursi'
+    ])
+    ->where('user_id', $user->user_id)
+    ->orderBy('tanggal_pemesanan', 'desc')
+    ->get();
 
     return view('profile.riwayat', compact('riwayat'));
 }
-
 public function updateProfile(Request $request)
 {
     $user = auth()->user();

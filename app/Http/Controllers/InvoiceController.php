@@ -20,12 +20,6 @@ class InvoiceController extends Controller
             abort(403, 'Anda tidak memiliki akses ke pemesanan ini.');
         }
         
-        // Jika status belum lunas, redirect ke pembayaran
-        if ($pemesanan->status_pemesanan !== 'Lunas') {
-             return redirect()->route('payment.show', $pemesanan_id)
-                              ->with('warning', 'Pemesanan belum lunas. Silakan selesaikan pembayaran.');
-        }
-        
         return view('films.invoice', compact('pemesanan'));
     }
 }

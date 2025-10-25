@@ -1,0 +1,272 @@
+@extends('layouts.owner')
+
+@section('title', 'Laporan Per Film')
+@section('page-title', 'Laporan Per Film')
+
+@section('content')
+<div class="space-y-6">
+    
+    <!-- Filter Section -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <form method="GET" action="{{ route('owner.laporan.film') }}" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- Start Date -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Dari Tanggal</label>
+                    <input type="date" name="start_date" value="{{ $startDate }}" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+
+                <!-- End Date -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sampai Tanggal</label>
+                    <input type="date" name="end_date" value="{{ $endDate }}" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex items-end space-x-2">
+                    <button type="submit" class="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                        <i class="fas fa-filter mr-2"></i>Filter
+                    </button>
+                    <a href="{{ route('owner.laporan.film') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" title="Reset Filter">
+                        <i class="fas fa-redo"></i>
+                    </a>
+                    <a href="{{ route('owner.laporan.film.export-pdf', ['start_date' => $startDate, 'end_date' => $endDate]) }}" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition" title="Export PDF" target="_blank">
+                        <i class="fas fa-file-pdf"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Filters -->
+            <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="setQuickFilter('today')" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-purple-100 hover:text-purple-700 transition">Hari Ini</button>
+                <button type="button" onclick="setQuickFilter('week')" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-purple-100 hover:text-purple-700 transition">7 Hari Terakhir</button>
+                <button type="button" onclick="setQuickFilter('month')" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-purple-100 hover:text-purple-700 transition">30 Hari Terakhir</button>
+                <button type="button" onclick="setQuickFilter('year')" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-purple-100 hover:text-purple-700 transition">Tahun Ini</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        <!-- Total Revenue -->
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-purple-100 mb-1">Total Pemasukan</p>
+                    <h3 class="text-2xl font-bold">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-3">
+                    <i class="fas fa-money-bill-wave text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Transactions -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Total Transaksi</p>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ number_format($totalTransactions) }}</h3>
+                </div>
+                <div class="bg-blue-100 rounded-full p-3">
+                    <i class="fas fa-receipt text-blue-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Tickets -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Total Tiket Terjual</p>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ number_format($totalTickets) }}</h3>
+                </div>
+                <div class="bg-green-100 rounded-full p-3">
+                    <i class="fas fa-ticket-alt text-green-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Films Table -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Detail Per Film</h3>
+            <span class="text-sm text-gray-600">{{ $films->count() }} Film</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul Film</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Genre</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Transaksi</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tiket Terjual</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Pemasukan</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Rata-rata</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($films as $index => $film)
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $index + 1 }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10">
+                                        @if($film->poster_url)
+                                            <img class="h-10 w-10 rounded object-cover" src="{{ asset('storage/' . $film->poster_url) }}" alt="{{ $film->judul }}">
+                                        @else
+                                            <div class="h-10 w-10 rounded bg-purple-100 flex items-center justify-center">
+                                                <i class="fas fa-film text-purple-600"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">{{ $film->judul }}</div>
+                                        <div class="text-xs text-gray-500">{{ $film->rating }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    {{ $film->genre }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
+                                {{ number_format($film->total_transactions) }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-ticket-alt text-purple-600 mr-1"></i>
+                                    {{ number_format($film->total_tickets) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-gray-900">
+                                Rp {{ number_format($film->total_revenue, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
+                                Rp {{ number_format($film->average_per_transaction, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <i class="fas fa-inbox text-gray-400 text-4xl mb-2"></i>
+                                <p class="text-gray-500">Belum ada data penjualan film dalam periode ini</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+                @if($films->count() > 0)
+                    <tfoot class="bg-gray-50">
+                        <tr class="font-bold">
+                            <td colspan="3" class="px-6 py-4 text-sm text-gray-900">TOTAL</td>
+                            <td class="px-6 py-4 text-center text-sm text-gray-900">{{ number_format($totalTransactions) }}</td>
+                            <td class="px-6 py-4 text-center text-sm text-gray-900">{{ number_format($totalTickets) }}</td>
+                            <td class="px-6 py-4 text-right text-sm text-gray-900">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</td>
+                            <td class="px-6 py-4 text-right text-sm text-gray-900">
+                                Rp {{ number_format($totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                @endif
+            </table>
+        </div>
+    </div>
+
+    <!-- Film Performance Chart -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Perbandingan Pemasukan Per Film</h3>
+        <canvas id="filmRevenueChart" class="w-full" style="max-height: 400px;"></canvas>
+    </div>
+
+</div>
+@endsection
+
+@push('scripts')
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Quick Filter Functions
+    function setQuickFilter(type) {
+        const today = new Date();
+        const endDate = today.toISOString().split('T')[0];
+        let startDate;
+
+        switch(type) {
+            case 'today':
+                startDate = endDate;
+                break;
+            case 'week':
+                const weekAgo = new Date(today);
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                startDate = weekAgo.toISOString().split('T')[0];
+                break;
+            case 'month':
+                const monthAgo = new Date(today);
+                monthAgo.setDate(monthAgo.getDate() - 30);
+                startDate = monthAgo.toISOString().split('T')[0];
+                break;
+            case 'year':
+                startDate = today.getFullYear() + '-01-01';
+                break;
+        }
+
+        document.querySelector('input[name="start_date"]').value = startDate;
+        document.querySelector('input[name="end_date"]').value = endDate;
+        document.querySelector('form').submit();
+    }
+
+    // Film Revenue Chart
+    @if($films->count() > 0)
+    const filmCtx = document.getElementById('filmRevenueChart').getContext('2d');
+    const filmChart = new Chart(filmCtx, {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($films->pluck('judul')->take(10)) !!},
+            datasets: [{
+                label: 'Pemasukan (Rp)',
+                data: {!! json_encode($films->pluck('total_revenue')->take(10)) !!},
+                backgroundColor: 'rgba(147, 51, 234, 0.7)',
+                borderColor: 'rgb(147, 51, 234)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
+        }
+    });
+    @endif
+</script>
+@endpush

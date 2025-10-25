@@ -7,7 +7,10 @@ use App\Models\Jadwal;
 use App\Models\Kursi;
 use App\Models\DetailPemesanan;
 use App\Models\Pemesanan;
+use App\Models\Pembayaran;
 use Illuminate\Support\Str;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class BookingController extends Controller
 {
@@ -47,7 +50,7 @@ class BookingController extends Controller
             'kursi_ids.*' => 'exists:kursis,kursi_id',
         ]);
 
-        $jadwal = Jadwal::findOrFail($request->jadwal_id);
+        $jadwal = Jadwal::with(['film', 'studio'])->findOrFail($request->jadwal_id);
         $kursiIds = $request->kursi_ids;
         
         // === VALIDASI 1: Jadwal maksimal H+1 (hari ini atau besok) ===
@@ -103,10 +106,67 @@ class BookingController extends Controller
                 'harga_per_kursi' => $hargaPerKursi,
             ]);
         }
-        
-        // Redirect ke halaman success
-        return redirect()->route('booking.success', $pemesanan->pemesanan_id)
-                         ->with('success', 'Booking berhasil! Silakan lanjutkan pembayaran.');
+
+        // 🔥 BUAT PEMBAYARAN & GENERATE SNAP TOKEN MIDTRANS
+        $transaction_id = 'ORDER-' . $pemesanan->pemesanan_id . '-' . time();
+
+        $pembayaran = Pembayaran::create([
+            'pemesanan_id' => $pemesanan->pemesanan_id,
+            'user_id' => auth()->id(),
+            'metode_bayar' => 'Online',
+            'nominal_dibayar' => $totalBayar,
+            'tanggal_pembayaran' => now(),
+            'status_pembayaran' => 'Pending',
+            'transaction_id' => $transaction_id,
+            'jenis_pembayaran' => 'Online',
+            'status_verifikasi' => 'pending',
+        ]);
+
+        // Setup Midtrans
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized = config('midtrans.is_sanitized');
+        Config::$is3ds = config('midtrans.is_3ds');
+
+        // Siapkan data untuk Midtrans
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaction_id,
+                'gross_amount' => (int) $totalBayar,
+            ],
+            'customer_details' => [
+                'first_name' => auth()->user()->name,
+                'email' => auth()->user()->email,
+                'phone' => auth()->user()->phone ?? '',
+            ],
+            'item_details' => [
+                [
+                    'id' => $jadwal->jadwal_id,
+                    'price' => (int) $hargaPerKursi,
+                    'quantity' => $jumlahKursi,
+                    'name' => $jadwal->film->judul . ' - ' . $jadwal->studio->nama_studio,
+                ]
+            ],
+            'enabled_payments' => [
+                'gopay', 'shopeepay', 'other_qris',
+                'bca_va', 'bni_va', 'bri_va', 'permata_va',
+                'echannel', 'credit_card'
+            ],
+        ];
+
+       try {
+    // Generate Snap Token
+    $snapToken = Snap::getSnapToken($params);
+    $pembayaran->update(['snap_token' => $snapToken]);
+
+    // 🔥 REDIRECT KE VIEW AUTO-POPUP (BUKAN KE ROUTE midtrans.create)
+    return view('films.midtrans-auto-popup', compact('pemesanan', 'snapToken'));
+
+} catch (\Exception $e) {
+    // Jika gagal generate token, redirect ke payment manual
+    return redirect()->route('payment.show', $pemesanan->pemesanan_id)
+        ->with('error', 'Gagal membuat transaksi: ' . $e->getMessage());
+}
     }
 
     /**
@@ -127,7 +187,6 @@ class BookingController extends Controller
             abort(403, 'Anda tidak memiliki akses ke pemesanan ini.');
         }
         
-        // SESUAIKAN DENGAN LOKASI FILE VIEW ANDA
         return view('films.booking-success', compact('pemesanan')); 
     }
 }

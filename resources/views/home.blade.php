@@ -64,7 +64,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-16">
                 <h2 class="text-4xl md:text-5xl font-extrabold text-[#2C3E50] tracking-tight pb-3 relative">
-                    <span class="relative z-10">🎬 Sedang Tayang</span>
+                    <span class="relative z-10">Now Playing</span>
                     <span class="absolute bottom-0 left-0 w-24 h-2 bg-[#FFC107] rounded-full -z-0 opacity-70"></span>
                 </h2>
                 <div class="flex space-x-4 mt-8 md:mt-0">
@@ -133,7 +133,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-16">
                 <h2 class="text-4xl md:text-5xl font-extrabold text-[#2C3E50] tracking-tight pb-3 relative">
-                    <span class="relative z-10">🗓️ Segera Tayang</span>
+                    <span class="relative z-10">Up Coming</span>
                     <span class="absolute bottom-0 left-0 w-24 h-2 bg-[#007BFF] rounded-full -z-0 opacity-70"></span>
                 </h2>
                 <div class="flex space-x-4 mt-8 md:mt-0">
@@ -191,7 +191,7 @@
                 <a href="{{ route('films.upcoming') }}" 
                     class="inline-flex items-center bg-[#F8F9FA] text-gray-600 font-semibold py-4 px-12 rounded-full text-lg 
                            border border-gray-200 shadow-md hover:shadow-lg hover:bg-gray-100 transition-all duration-300">
-                    Lihat Kalender Rilis <i class="fas fa-calendar-alt ml-3"></i>
+                    Lihat Semua Film <i class="fas fa-calendar-alt ml-3"></i>
                 </a>
             </div>
         </div>
