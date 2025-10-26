@@ -38,14 +38,6 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Quick Filters -->
-            <div class="flex flex-wrap gap-2">
-                <button type="button" onclick="setQuickFilter('today')" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200">Hari Ini</button>
-                <button type="button" onclick="setQuickFilter('week')" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200">7 Hari Terakhir</button>
-                <button type="button" onclick="setQuickFilter('month')" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200">30 Hari Terakhir</button>
-                <button type="button" onclick="setQuickFilter('year')" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200">Tahun Ini</button>
-            </div>
         </form>
     </div>
 

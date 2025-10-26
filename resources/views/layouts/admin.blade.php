@@ -72,6 +72,14 @@
                             </a>
                         </li>
 
+                        <!--Kelola Owner -->
+                        <li>
+                            <a href="{{ route('admin.owners.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.kasirs.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                                <i class="fas fa-user-tie w-5"></i>
+                                <span class="ml-3">Kelola Owner</span>
+                            </a>
+                        </li>
+
                         <!-- Kelola Pelanggan -->
                         <li>
                             <a href="{{ route('admin.pelanggans.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.pelanggans.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">

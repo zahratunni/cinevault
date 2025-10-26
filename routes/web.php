@@ -13,9 +13,11 @@ use App\Http\Controllers\Admin\AdminFilmController;
 use App\Http\Controllers\Admin\AdminJadwalController;
 use App\Http\Controllers\Admin\AdminStudioController;
 use App\Http\Controllers\Admin\AdminKasirController;
+use App\Http\Controllers\Admin\AdminOwnerController;
 use App\Http\Controllers\Admin\AdminPelangganController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Kasir\KasirDashboardController;
+use App\Http\Controllers\Kasir\KasirProfileController;
 use App\Http\Controllers\Kasir\KasirPembayaranController;
 use App\Http\Controllers\Kasir\KasirPemesananController;
 use App\Http\Controllers\Kasir\KasirTiketController;
@@ -89,6 +91,7 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('jadwals', AdminJadwalController::class);
     Route::resource('studios', AdminStudioController::class);
     Route::resource('kasirs', AdminKasirController::class);
+    Route::resource('owners', AdminOwnerController::class);
 
     // Pelanggan Management
     Route::get('/pelanggans', [AdminPelangganController::class, 'index'])->name('pelanggans.index');
@@ -121,6 +124,9 @@ Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::get('/search-tiket', [KasirTiketController::class, 'search'])->name('tiket.search');
     Route::post('/cari-tiket', [KasirTiketController::class, 'cari'])->name('tiket.cari');
     Route::get('/tiket/{pemesanan_id}', [KasirTiketController::class, 'show'])->name('tiket.show');
+    
+    //profile
+    Route::get('/profile', [KasirProfileController::class, 'index'])->name('profile.index');
 
     // Midtrans Callback
     Route::post('/midtrans/callback', [KasirMidtransController::class, 'callback'])->name('midtrans.callback');

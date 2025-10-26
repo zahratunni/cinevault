@@ -3,15 +3,15 @@
 @section('content')
 <div class="min-h-screen">
     {{-- Hero Section with Image Slider --}}
-    <div class="relative w-full h-[600px] md:h-[750px] overflow-hidden bg-white"> {{-- Added bg-white to the main hero container --}}
+    <div class="relative w-full h-[600px] md:h-[750px] overflow-hidden bg-white">
         <div class="swiper heroSwiper w-full h-full absolute inset-0 z-0">
             <div class="swiper-wrapper">
                 {{-- Slide 1: Custom image with content alignment --}}
                 <div class="swiper-slide relative flex items-center justify-center bg-white h-full">
-                    {{-- Inner container to align content with max-w-7xl --}}
-                    <div class="max-w-7xl mx-auto w-full h-full flex items-center justify-center relative overflow-hidden">
+                    {{-- Inner container to align content with max-w-7xl and added rounded-lg for border-radius --}}
+                    <div class="max-w-7xl mx-auto w-full h-full flex items-center justify-center relative overflow-hidden rounded-lg">
                         <img src="{{ asset('7.jpg') }}" 
-                             class="h-full w-auto object-contain" 
+                             class="h-full w-full object-cover" {{-- Changed object-contain to object-cover to make image fill the container --}}
                              alt="Movie Banner">
                         {{-- Overlay for text readability --}}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#1A202C] via-transparent to-transparent opacity-80"></div>
@@ -20,7 +20,7 @@
 
                 {{-- Slide 2: Placeholder background image with content alignment --}}
                 <div class="swiper-slide relative flex items-center justify-center bg-white h-full">
-                    <div class="max-w-7xl mx-auto w-full h-full flex items-center justify-center relative bg-cover bg-center" 
+                    <div class="max-w-7xl mx-auto w-full h-full flex items-center justify-center relative bg-cover bg-center rounded-lg" {{-- Added rounded-lg --}}
                          style="background-image: url('https://via.placeholder.com/1920x1080/0056B3/FFFFFF?text=Movie+Banner+2');">
                         {{-- Overlay for text readability --}}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#1A202C] via-transparent to-transparent opacity-80"></div>
@@ -29,7 +29,7 @@
 
                 {{-- Slide 3: Placeholder background image with content alignment --}}
                 <div class="swiper-slide relative flex items-center justify-center bg-white h-full">
-                    <div class="max-w-7xl mx-auto w-full h-full flex items-center justify-center relative bg-cover bg-center" 
+                    <div class="max-w-7xl mx-auto w-full h-full flex items-center justify-center relative bg-cover bg-center rounded-lg" {{-- Added rounded-lg --}}
                          style="background-image: url('https://via.placeholder.com/1920x1080/003F8C/FFFFFF?text=Movie+Banner+3');">
                         {{-- Overlay for text readability --}}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#1A202C] via-transparent to-transparent opacity-80"></div>

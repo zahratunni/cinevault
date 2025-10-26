@@ -1,5 +1,5 @@
 {{-- resources/views/layouts/navbar.blade.php --}}
-<nav class="absolute top-0 left-0 w-full z-50 transition-all duration-300" id="navbar">
+<nav class="absolute top-0 left-0 w-full z-50 transition-all duration-300 bg-[#1A202C] shadow-lg" id="navbar"> {{-- Removed /95 and backdrop-blur-lg for solid color, added shadow --}}
     <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
             
@@ -220,22 +220,21 @@
             });
         }
 
-        // Navbar scroll effect
-        // Only apply transparent background on home page when at the top
-        if (navbar && window.location.pathname === '/' || window.location.pathname === '/home') { // Added /home route
-            navbar.classList.add('bg-transparent'); // Default transparent for home
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 100) { // Changed scroll threshold for better visibility with hero
-                    navbar.classList.add('bg-[#1A202C]/95', 'backdrop-blur-lg', 'border-b', 'border-[#2D3748]');
-                    navbar.classList.remove('bg-transparent');
-                } else {
-                    navbar.classList.remove('bg-[#1A202C]/95', 'backdrop-blur-lg', 'border-b', 'border-[#2D3748]');
-                    navbar.classList.add('bg-transparent');
-                }
-            });
-        } else {
-            // For other pages, always show dark background
-            navbar.classList.add('bg-[#1A202C]/95', 'backdrop-blur-lg', 'border-b', 'border-[#2D3748]');
-        }
+        // --- Perubahan utama ada di sini ---
+        // Jika navbar selalu ingin berwarna, hapus semua logika scroll effect
+        // Karena kita sudah menambahkan bg-[#1A202C] langsung ke tag <nav> di atas.
+        // Jika Anda tetap ingin ada efek saat scroll (misalnya border bawah), Anda bisa tambahkan.
+        // Untuk saat ini, saya akan menghapus semua logika perubahan warna on scroll.
+
+        // Menghapus semua logika scroll effect agar navbar selalu berwarna solid.
+        // navbar.classList.add('bg-[#1A202C]', 'shadow-lg'); // Pastikan ini ada di markup awal
+        // Jika Anda masih ingin efek border bawah saat scroll, Anda bisa tambahkan ini:
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) { // Setelah scroll sedikit
+                navbar.classList.add('border-b', 'border-[#2D3748]');
+            } else {
+                navbar.classList.remove('border-b', 'border-[#2D3748]');
+            }
+        });
     });
 </script>

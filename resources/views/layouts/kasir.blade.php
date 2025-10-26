@@ -26,55 +26,40 @@
                     </button>
                 </div>
 
-              <!-- Navigation Kasir -->
-<nav class="flex-1 px-4 py-6 overflow-y-auto">
-    <ul class="space-y-2">
-        <!-- Dashboard -->
-        <li>
-            <a href="{{ route('kasir.dashboard') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.dashboard') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                <i class="fas fa-home w-5"></i>
-                <span class="ml-3">Dashboard</span>
-            </a>
-        </li>
+                <!-- Navigation Kasir -->
+                <nav class="flex-1 px-4 py-6 overflow-y-auto">
+                    <ul class="space-y-2">
+                        <!-- Dashboard -->
+                        <li>
+                            <a href="{{ route('kasir.dashboard') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.dashboard') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                                <i class="fas fa-home w-5"></i>
+                                <span class="ml-3">Dashboard</span>
+                            </a>
+                        </li>
 
-        <!-- Pemesanan Offline -->
-        <li>
-            <a href="{{ route('kasir.pemesanan.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.pemesanan.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                <i class="fas fa-ticket-alt w-5"></i>
-                <span class="ml-3">Pemesanan Offline</span>
-            </a>
-        </li>
+                        <!-- Pemesanan Offline -->
+                        <li>
+                            <a href="{{ route('kasir.pemesanan.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.pemesanan.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                                <i class="fas fa-ticket-alt w-5"></i>
+                                <span class="ml-3">Pemesanan Offline</span>
+                            </a>
+                        </li>
 
-        <!-- Cetak Tiket -->
-        <li>
-            <a href="{{ route('kasir.tiket.search') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.tiket.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                <i class="fas fa-print w-5"></i>
-                <span class="ml-3">Cetak Tiket</span>
-            </a>
-        </li>
-    </ul>
-
-    <!-- Fitur Lain Coming Soon -->
-    <div class="mt-8 p-4 bg-gray-800 rounded-lg">
-        <p class="text-xs text-gray-400 font-medium">FITUR LAINNYA</p>
-        <ul class="space-y-2 mt-3">
-            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
-                <i class="fas fa-barcode w-4"></i>
-                <span class="ml-2">Validasi Tiket</span>
-            </li>
-            <li class="flex items-center px-3 py-2 rounded text-gray-500 text-sm cursor-not-allowed">
-                <i class="fas fa-chart-bar w-4"></i>
-                <span class="ml-2">Laporan</span>
-            </li>
-        </ul>
-    </div>
-</nav>          
+                        <!-- Cetak Tiket -->
+                        <li>
+                            <a href="{{ route('kasir.tiket.search') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.tiket.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                                <i class="fas fa-print w-5"></i>
+                                <span class="ml-3">Cetak Tiket</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
 
                 <!-- User Profile -->
                 <div class="px-4 py-4 border-t border-gray-700">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                            <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
                                 {{ substr(Auth::user()->username, 0, 1) }}
                             </div>
                         </div>
@@ -109,7 +94,7 @@
                         <!-- User Dropdown -->
                         <div class="relative" id="userDropdown">
                             <button id="userMenuButton" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
-                                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                                <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-sm font-bold">
                                     {{ substr(Auth::user()->username, 0, 1) }}
                                 </div>
                                 <span class="hidden md:block text-sm font-medium">{{ Auth::user()->username }}</span>
@@ -118,6 +103,10 @@
 
                             <!-- Dropdown Menu -->
                             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                                <a href="{{ route('kasir.profile.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-user mr-2"></i> Profile
+                                </a>
+                                <hr class="my-2">
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">

@@ -4,11 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-
-
 
 class Pemesanan extends Model
 {
@@ -18,35 +13,46 @@ class Pemesanan extends Model
     protected $primaryKey = 'pemesanan_id';
 
     protected $fillable = [
-        'user_id', 'jadwal_id', 'kode_transaksi', 'harga_dasar_total', 
-        'total_bayar', 'jenis_pemesanan', 'status_pemesanan', 'tanggal_pemesanan'
+        'user_id',
+        'jadwal_id',
+        'kode_transaksi',
+        'jenis_pemesanan',
+        'status_pemesanan',
+        'harga_dasar_total',
+        'total_bayar',
+        'tanggal_pemesanan',
+        'tiket_dicetak_at',    // ← Sudah ada
+        'dicetak_oleh',
     ];
-    // --- RELASI BELONGS TO (Foreign Key) ---
 
-    // 1. Pemesanan dimiliki oleh satu User (Customer)
-    public function user(): BelongsTo
+    // ✅ TAMBAHKAN CAST INI
+    protected $casts = [
+        'tanggal_pemesanan' => 'datetime',
+        'tiket_dicetak_at' => 'datetime',  // ← PENTING!
+    ];
+
+    // Relasi
+    public function user()
     {
-        // FK: id_customer menunjuk ke PK id_user di Model User
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    // 2. Pemesanan terkait dengan satu Jadwal tayang
-    public function jadwal(): BelongsTo
-    {
-        return $this->belongsTo(Jadwal::class, 'jadwal_id', 'jadwal_id');
-    }
-
-    // --- RELASI HAS MANY / HAS ONE (Primary Key) ---
-
-    // 3. Pemesanan memiliki banyak Detail Pemesanan (untuk setiap kursi)
-    public function detailPemesanans(): HasMany
+    public function jadwal()
+{
+    return $this->belongsTo(Jadwal::class, 'jadwal_id', 'jadwal_id');
+}
+    public function detailPemesanans()
     {
         return $this->hasMany(DetailPemesanan::class, 'pemesanan_id', 'pemesanan_id');
     }
-    
-    // 4. Pemesanan memiliki satu Pembayaran (relasi 1:1)
-    public function pembayaran(): HasOne
+
+    public function pembayaran()
     {
         return $this->hasOne(Pembayaran::class, 'pemesanan_id', 'pemesanan_id');
+    }
+
+    public function kasirPencetak()
+    {
+        return $this->belongsTo(User::class, 'dicetak_oleh');
     }
 }

@@ -19,7 +19,11 @@ class Kernel extends ConsoleKernel
     $schedule->call(function () {
         \Artisan::call('db:seed', ['--class' => 'JadwalSeeder']);
     })->dailyAt('02:00');
+
+    $schedule->command('bookings:cancel-expired')->everyFiveMinutes();
 }
+
+
 
 
     /**

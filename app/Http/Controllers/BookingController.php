@@ -11,6 +11,7 @@ use App\Models\Pembayaran;
 use Illuminate\Support\Str;
 use Midtrans\Config;
 use Midtrans\Snap;
+use App\Jobs\CancelExpiredBooking;
 
 class BookingController extends Controller
 {
@@ -158,6 +159,10 @@ class BookingController extends Controller
     // Generate Snap Token
     $snapToken = Snap::getSnapToken($params);
     $pembayaran->update(['snap_token' => $snapToken]);
+
+    //autocancel 10 menit    
+     CancelExpiredBooking::dispatch($pemesanan->pemesanan_id)
+        ->delay(now()->addMinutes(10));
 
     // 🔥 REDIRECT KE VIEW AUTO-POPUP (BUKAN KE ROUTE midtrans.create)
     return view('films.midtrans-auto-popup', compact('pemesanan', 'snapToken'));
