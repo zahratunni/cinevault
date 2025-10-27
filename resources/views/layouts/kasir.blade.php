@@ -37,11 +37,20 @@
                             </a>
                         </li>
 
-                        <!-- Pemesanan Offline -->
+                        <!-- Pemesanan Offline (Buat Baru) -->
                         <li>
-                            <a href="{{ route('kasir.pemesanan.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.pemesanan.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                                <i class="fas fa-ticket-alt w-5"></i>
-                                <span class="ml-3">Pemesanan Offline</span>
+                            <a href="{{ route('kasir.pemesanan.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.pemesanan.index') || request()->routeIs('kasir.pemesanan.store') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                                <i class="fas fa-plus-circle w-5"></i>
+                                <span class="ml-3">Buat Pemesanan</span>
+                            </a>
+                        </li>
+
+                        <!-- 🆕 TAMBAHKAN MENU INI -->
+                        <!-- Kelola Pemesanan Offline -->
+                        <li>
+                            <a href="{{ route('kasir.kelola.pemesanan') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('kasir.kelola.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                                <i class="fas fa-list-alt w-5"></i>
+                                <span class="ml-3">Kelola Pemesanan</span>
                             </a>
                         </li>
 

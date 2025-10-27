@@ -96,41 +96,60 @@ class KasirMidtransController extends Controller
     /**
      * Callback otomatis Midtrans
      */
-    public function callback(Request $request)
-    {
-        try {
-            $notification = new Notification();
+   public function callback(Request $request)
+{
+    // ⭐ TAMBAHKAN LOGGING INI untuk debug
+    \Log::info('🔔 Midtrans Callback Kasir Received', [
+        'method' => $request->method(),
+        'all_data' => $request->all(),
+        'raw_body' => $request->getContent()
+    ]);
 
-            $transactionStatus = $notification->transaction_status;
-            $orderId = $notification->order_id;
-            $paymentType = $notification->payment_type;
+    try {
+        $notification = new Notification();
 
-            $pembayaran = Pembayaran::where('transaction_id', $orderId)->first();
+        $transactionStatus = $notification->transaction_status;
+        $orderId = $notification->order_id;
+        $paymentType = $notification->payment_type;
 
-            if (!$pembayaran) {
-                return response()->json(['message' => 'Pembayaran tidak ditemukan'], 404);
-            }
+        \Log::info('📦 Notification Details', [
+            'order_id' => $orderId,
+            'transaction_status' => $transactionStatus,
+            'payment_type' => $paymentType
+        ]);
 
-            $pemesanan = $pembayaran->pemesanan;
+        $pembayaran = Pembayaran::where('transaction_id', $orderId)->first();
 
-            if (in_array($transactionStatus, ['capture', 'settlement'])) {
-                $this->updateToSuccess($pembayaran, $pemesanan, $paymentType);
-            } elseif ($transactionStatus === 'pending') {
-                $pembayaran->update([
-                    'status_pembayaran' => 'Pending',
-                    'status_verifikasi' => 'pending',
-                    'payment_type' => $paymentType
-                ]);
-            } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
-                $this->updateToFailed($pembayaran, $pemesanan);
-            }
-
-            return response()->json(['message' => 'Callback processed']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+        if (!$pembayaran) {
+            \Log::error('❌ Pembayaran tidak ditemukan', ['order_id' => $orderId]);
+            return response()->json(['message' => 'Pembayaran tidak ditemukan'], 404);
         }
-    }
 
+        $pemesanan = $pembayaran->pemesanan;
+
+        if (in_array($transactionStatus, ['capture', 'settlement'])) {
+            $this->updateToSuccess($pembayaran, $pemesanan, $paymentType);
+            \Log::info('✅ Pembayaran berhasil', ['order_id' => $orderId]);
+        } elseif ($transactionStatus === 'pending') {
+            $pembayaran->update([
+                'status_pembayaran' => 'Pending',
+                'status_verifikasi' => 'pending',
+                'payment_type' => $paymentType
+            ]);
+            \Log::info('⏳ Pembayaran pending', ['order_id' => $orderId]);
+        } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+            $this->updateToFailed($pembayaran, $pemesanan);
+            \Log::info('⛔ Pembayaran gagal', ['order_id' => $orderId, 'status' => $transactionStatus]);
+        }
+
+        return response()->json(['message' => 'Callback processed successfully']);
+    } catch (\Exception $e) {
+        \Log::error('❌ Callback Error: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString()
+        ]);
+        return response()->json(['message' => $e->getMessage()], 500);
+    }
+}
     /**
      * Halaman finish setelah bayar sukses
      */

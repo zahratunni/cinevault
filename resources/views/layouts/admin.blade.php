@@ -64,19 +64,19 @@
                             </a>
                         </li>
 
+                        <!-- Kelola Owner -->
+                        <li>
+                            <a href="{{ route('admin.owners.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.owners.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                                <i class="fas fa-crown w-5"></i>
+                                <span class="ml-3">Kelola Owner</span>
+                            </a>
+                        </li>
+
                         <!-- Kelola Kasir -->
                         <li>
                             <a href="{{ route('admin.kasirs.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.kasirs.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-user-tie w-5"></i>
                                 <span class="ml-3">Kelola Kasir</span>
-                            </a>
-                        </li>
-
-                        <!--Kelola Owner -->
-                        <li>
-                            <a href="{{ route('admin.owners.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.kasirs.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
-                                <i class="fas fa-user-tie w-5"></i>
-                                <span class="ml-3">Kelola Owner</span>
                             </a>
                         </li>
 
@@ -126,12 +126,6 @@
 
                     <!-- Right Side -->
                     <div class="flex items-center space-x-4 ml-auto">
-                        <!-- Notifications -->
-                        <button class="relative text-gray-600 hover:text-gray-900">
-                            <i class="fas fa-bell text-xl"></i>
-                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
-                        </button>
-
                         <!-- User Dropdown -->
                         <div class="relative" id="userDropdown">
                             <button id="userMenuButton" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">

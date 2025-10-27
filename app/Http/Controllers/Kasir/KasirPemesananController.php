@@ -6,15 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Models\Jadwal;
 use App\Models\Pemesanan;
 use App\Models\DetailPemesanan;
+use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class KasirPemesananController extends Controller
 {
-    // Tampilkan halaman pemesanan offline
+    // ==========================================
+    // BAGIAN 1: PEMESANAN BARU (CREATE)
+    // ==========================================
+    
+    /**
+     * Tampilkan halaman pemesanan offline
+     */
     public function index()
     {
-        // Ambil jadwal yang aktif dan tanggal tayang >= hari ini
         $jadwals = Jadwal::with('film', 'studio')
             ->where('status_jadwal', 'Active')
             ->where('tanggal_tayang', '>=', now()->toDateString())
@@ -25,21 +31,21 @@ class KasirPemesananController extends Controller
         return view('kasir.pemesanan-offline', compact('jadwals'));
     }
 
-    // API: Ambil kursi yang tersedia untuk jadwal tertentu
+    /**
+     * API: Ambil kursi yang tersedia untuk jadwal tertentu
+     */
     public function getKursiAvailable($jadwal_id)
     {
         try {
-            // Ambil jadwal beserta studio dan kursinya
             $jadwal = Jadwal::with('studio.kursis')->findOrFail($jadwal_id);
 
-            // Cari kursi yang sudah terjual (status pemesanan bukan dibatalkan)
+            // Cari kursi yang sudah terjual (kecuali yang dibatalkan)
             $kursiTerjual = DetailPemesanan::join('pemesanans', 'detail_pemesanans.pemesanan_id', '=', 'pemesanans.pemesanan_id')
                 ->where('pemesanans.jadwal_id', $jadwal_id)
                 ->where('pemesanans.status_pemesanan', '!=', 'Dibatalkan')
                 ->pluck('detail_pemesanans.kursi_id')
                 ->toArray();
 
-            // Map kursi dengan status tersedia atau tidak
             $kursis = $jadwal->studio->kursis->map(function ($kursi) use ($kursiTerjual) {
                 return [
                     'kursi_id' => $kursi->kursi_id,
@@ -63,34 +69,27 @@ class KasirPemesananController extends Controller
         }
     }
 
-    // Simpan pemesanan offline
+    /**
+     * Simpan pemesanan offline baru
+     */
     public function store(Request $request)
     {
-        // Validasi input
         $validated = $request->validate([
             'jadwal_id' => 'required|exists:jadwals,jadwal_id',
-            'kursi_ids' => 'required|string', // Akan menerima JSON string
+            'kursi_ids' => 'required|string',
         ]);
 
-        // Decode JSON string kursi_ids
         $kursiIds = json_decode($validated['kursi_ids'], true);
 
-        // Validasi kursi_ids
         if (empty($kursiIds) || !is_array($kursiIds)) {
             return back()->with('error', 'Pilih minimal 1 kursi!');
         }
 
         try {
-            // Ambil jadwal
             $jadwal = Jadwal::findOrFail($validated['jadwal_id']);
-
-            // Generate kode transaksi unik
             $kodeTransaksi = 'TRX-' . now()->format('YmdHis') . '-' . Str::random(4);
-
-            // Hitung total harga
             $totalHarga = $jadwal->harga_reguler * count($kursiIds);
 
-            // Buat pemesanan
             $pemesanan = Pemesanan::create([
                 'user_id' => auth()->id(),
                 'jadwal_id' => $validated['jadwal_id'],
@@ -102,7 +101,6 @@ class KasirPemesananController extends Controller
                 'tanggal_pemesanan' => now(),
             ]);
 
-            // Buat detail pemesanan (per kursi)
             foreach ($kursiIds as $kursi_id) {
                 DetailPemesanan::create([
                     'pemesanan_id' => $pemesanan->pemesanan_id,
@@ -111,11 +109,178 @@ class KasirPemesananController extends Controller
                 ]);
             }
 
-            // Redirect ke pembayaran
             return redirect()->route('kasir.pembayaran.index', $pemesanan->pemesanan_id)
                 ->with('success', 'Pemesanan berhasil dibuat! Lanjut ke pembayaran.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error: ' . $e->getMessage());
+        }
+    }
+
+    // ==========================================
+    // BAGIAN 2: KELOLA PEMESANAN OFFLINE (READ/UPDATE/DELETE)
+    // ==========================================
+
+    /**
+     * Halaman Kelola Pemesanan Offline
+     * Menampilkan daftar semua pemesanan offline dengan filter
+     */
+   public function kelolaPemesanan(Request $request)
+{
+    $query = Pemesanan::with(['jadwal.film', 'jadwal.studio', 'pembayaran', 'user'])
+        ->where('jenis_pemesanan', 'Offline')
+        ->whereHas('jadwal') // ⭐ TAMBAHKAN INI - Filter hanya yang punya jadwal
+        ->whereHas('jadwal.film') // ⭐ TAMBAHKAN INI - Filter hanya yang punya film
+        ->latest();
+
+    // Filter by status
+    if ($request->has('status') && $request->status != '') {
+        $query->where('status_pemesanan', $request->status);
+    }
+
+    // Filter by date
+    if ($request->has('tanggal') && $request->tanggal != '') {
+        $query->whereDate('created_at', $request->tanggal);
+    }
+
+    // Search by kode transaksi
+    if ($request->has('search') && $request->search != '') {
+        $query->where('kode_transaksi', 'like', '%' . $request->search . '%');
+    }
+
+    $pemesanans = $query->paginate(15);
+
+    return view('kasir.kelola-pemesanan.index', compact('pemesanans'));
+}
+
+    /**
+     * Detail Pemesanan Offline
+     * Menampilkan detail lengkap pemesanan untuk diproses
+     */
+    public function detailPemesanan($pemesanan_id)
+    {
+        $pemesanan = Pemesanan::with([
+            'jadwal.film', 
+            'jadwal.studio', 
+            'pembayaran', 
+            'detailPemesanans.kursi',
+            'user'
+        ])->findOrFail($pemesanan_id);
+
+        // Validasi: hanya pemesanan offline yang bisa diakses
+        if ($pemesanan->jenis_pemesanan != 'Offline') {
+            return redirect()->route('kasir.kelola.pemesanan')
+                ->with('error', 'Hanya pemesanan offline yang dapat dikelola di halaman ini');
+        }
+
+        return view('kasir.kelola-pemesanan.detail', compact('pemesanan'));
+    }
+
+    /**
+     * Konfirmasi Pembayaran Cash
+     * Kasir konfirmasi pembayaran tunai dari customer
+     */
+    public function confirmCash(Request $request, $pemesanan_id)
+    {
+        $pemesanan = Pemesanan::findOrFail($pemesanan_id);
+
+        // Validasi status pemesanan
+        if ($pemesanan->status_pemesanan == 'Lunas') {
+            return back()->with('error', 'Pemesanan sudah lunas!');
+        }
+
+        if ($pemesanan->status_pemesanan == 'Dibatalkan') {
+            return back()->with('error', 'Pemesanan sudah dibatalkan!');
+        }
+
+        // Validasi nominal pembayaran
+        $request->validate([
+            'nominal_dibayar' => 'required|numeric|min:' . $pemesanan->total_bayar,
+        ], [
+            'nominal_dibayar.required' => 'Nominal pembayaran harus diisi',
+            'nominal_dibayar.numeric' => 'Nominal harus berupa angka',
+            'nominal_dibayar.min' => 'Nominal minimal Rp ' . number_format($pemesanan->total_bayar, 0, ',', '.'),
+        ]);
+
+        try {
+            $kembalian = $request->nominal_dibayar - $pemesanan->total_bayar;
+
+            // Cek apakah sudah ada data pembayaran
+            $pembayaran = $pemesanan->pembayaran;
+
+            if (!$pembayaran) {
+                // Buat pembayaran baru
+                Pembayaran::create([
+                    'pemesanan_id' => $pemesanan->pemesanan_id,
+                    'user_id' => auth()->id(),
+                    'metode_bayar' => 'Cash',
+                    'nominal_dibayar' => $request->nominal_dibayar,
+                    'tanggal_pembayaran' => now(),
+                    'status_pembayaran' => 'Lunas',
+                    'jenis_pembayaran' => 'Cash',
+                    'status_verifikasi' => 'approved',
+                    'verified_at' => now(),
+                ]);
+            } else {
+                // Update pembayaran yang sudah ada
+                $pembayaran->update([
+                    'metode_bayar' => 'Cash',
+                    'nominal_dibayar' => $request->nominal_dibayar,
+                    'status_pembayaran' => 'Lunas',
+                    'status_verifikasi' => 'approved',
+                    'tanggal_pembayaran' => now(),
+                    'verified_at' => now(),
+                    'user_id' => auth()->id(),
+                ]);
+            }
+
+            // Update status pemesanan menjadi Lunas
+            $pemesanan->update(['status_pemesanan' => 'Lunas']);
+
+            return redirect()
+                ->route('kasir.tiket.show', $pemesanan_id)
+                ->with('success', 'Pembayaran cash berhasil! Kembalian: Rp ' . number_format($kembalian, 0, ',', '.'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Batalkan Pemesanan
+     * Membatalkan pemesanan dan mengembalikan kursi ke pool
+     */
+    public function cancelPemesanan($pemesanan_id)
+    {
+        $pemesanan = Pemesanan::findOrFail($pemesanan_id);
+
+        // Validasi: tidak bisa batalkan yang sudah lunas
+        if ($pemesanan->status_pemesanan == 'Lunas') {
+            return back()->with('error', 'Pemesanan yang sudah lunas tidak dapat dibatalkan!');
+        }
+
+        if ($pemesanan->status_pemesanan == 'Dibatalkan') {
+            return back()->with('error', 'Pemesanan sudah dibatalkan sebelumnya!');
+        }
+
+        try {
+            // Update status pemesanan
+            $pemesanan->update(['status_pemesanan' => 'Dibatalkan']);
+
+            // Update status pembayaran jika ada
+            if ($pemesanan->pembayaran) {
+                $pemesanan->pembayaran->update([
+                    'status_pembayaran' => 'Gagal',
+                    'status_verifikasi' => 'rejected',
+                ]);
+            }
+
+            // Kursi otomatis tersedia lagi
+            // Karena di getKursiAvailable() sudah filter status != 'Dibatalkan'
+
+            return redirect()
+                ->route('kasir.kelola.pemesanan')
+                ->with('success', 'Pemesanan berhasil dibatalkan. Kursi telah dikembalikan.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }
