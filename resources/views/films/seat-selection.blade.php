@@ -40,21 +40,31 @@
                                         <!-- Lorong tengah -->
                                         <div class="w-8"></div>
                                     @endif
+
+                                    @php
+                                        $isBooked = in_array($kursi->kursi_id, $bookedKursiIds);
+                                        $isReserved = in_array($kursi->kursi_id, $reservedKursiIds ?? []);
+                                        $isDisabled = $isBooked || $isReserved;
+                                    @endphp
+
                                     <div class="relative">
                                         <input type="checkbox" 
                                             name="kursi_ids[]" 
                                             value="{{ $kursi->kursi_id }}" 
                                             id="kursi_{{ $kursi->kursi_id }}"
                                             class="peer hidden kursi-checkbox"
-                                            {{ in_array($kursi->kursi_id, $bookedKursiIds) ? 'disabled' : '' }}>
+                                            {{ $isDisabled ? 'disabled' : '' }}>
                                         
                                         <label for="kursi_{{ $kursi->kursi_id }}" 
-                                            class="block w-10 h-10 rounded-lg cursor-pointer transition-all duration-200
-                                                {{ in_array($kursi->kursi_id, $bookedKursiIds) 
-                                                    ? 'bg-[#FFC107] border-2 border-[#FFC107] cursor-not-allowed text-[#2C3E50]'
-                                                    : 'bg-gray-100 border-2 border-gray-300 hover:border-[#007BFF] text-gray-700' }}
-                                                peer-checked:bg-[#007BFF] peer-checked:border-[#007BFF] peer-checked:scale-110 peer-checked:text-white
-                                                flex items-center justify-center text-xs font-medium">
+                                            class="block w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center text-xs font-medium
+                                                @if($isBooked)
+                                                    bg-[#FFC107] border-2 border-[#FFC107] cursor-not-allowed text-white
+                                                @elseif($isReserved)
+                                                    bg-[#10B981] border-2 border-[#10B981] cursor-not-allowed text-white
+                                                @else
+                                                    bg-gray-100 border-2 border-gray-300 hover:border-[#007BFF] text-gray-700 cursor-pointer
+                                                    peer-checked:bg-[#007BFF] peer-checked:border-[#007BFF] peer-checked:scale-110 peer-checked:text-white
+                                                @endif">
                                             {{ $kursi->nomor_kursi }}
                                         </label>
                                     </div>
@@ -68,7 +78,7 @@
                     </div>
 
                     <!-- Legend -->
-                    <div class="flex justify-center gap-8 mb-8 mt-12">
+                    <div class="flex justify-center gap-6 mb-8 mt-12 flex-wrap">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 bg-gray-100 border-2 border-gray-300 rounded-lg"></div>
                             <span class="text-sm text-gray-600">Tersedia</span>
@@ -76,6 +86,10 @@
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 bg-[#007BFF] border-2 border-[#007BFF] rounded-lg"></div>
                             <span class="text-sm text-gray-600">Dipilih</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-[#10B981] border-2 border-[#10B981] rounded-lg"></div>
+                            <span class="text-sm text-gray-600">Sedang Dipesan</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 bg-[#FFC107] border-2 border-[#FFC107] rounded-lg"></div>
@@ -122,12 +136,12 @@
                         </div>
                     </div>
 
-                    <!-- Pesan Error (Untuk mengganti alert) -->
+                    <!-- Pesan Error -->
                     <div id="validationError" class="p-3 bg-red-100 text-red-700 rounded-lg text-sm mb-4 w-full hidden">
                         Silakan pilih minimal 1 kursi untuk melanjutkan pembayaran.
                     </div>
 
-                    <!-- Tombol Pembayaran (SATU-SATUNYA TOMBOL) -->
+                    <!-- Tombol Pembayaran -->
                     <button type="button" 
                             id="btnPembayaran"
                             class="w-full bg-[#007BFF] hover:bg-[#0056B3] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-md hover:shadow-xl transform hover:scale-105 
@@ -149,35 +163,30 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const hargaPerKursi = {{ $jadwal->harga_reguler }};
-    const checkboxes = document.querySelectorAll('.kursi-checkbox');
+    const checkboxes = document.querySelectorAll('.kursi-checkbox:not([disabled])');
     const bookingForm = document.getElementById('bookingForm');
 
-    // Elemen sidebar kanan
     const kursiDetail = document.getElementById('kursiDetail');
     const kursiDipilihText = document.getElementById('kursiDipilihText');
     const jumlahKursiText = document.getElementById('jumlahKursiText');
     const totalHargaText = document.getElementById('totalHargaText');
     const btnPembayaran = document.getElementById('btnPembayaran');
     const infoPilihKursi = document.getElementById('infoPilihKursi');
-    const validationError = document.getElementById('validationError'); // Ambil elemen pesan error
+    const validationError = document.getElementById('validationError');
 
     function updateCheckout() {
         const selectedCheckboxes = Array.from(checkboxes).filter(cb => cb.checked);
         const jumlahKursi = selectedCheckboxes.length;
         
-        // Sembunyikan pesan error setiap kali ada perubahan
         validationError.classList.add('hidden');
 
         if (jumlahKursi > 0) {
             kursiDetail.classList.remove('hidden');
             btnPembayaran.classList.remove('hidden');
             infoPilihKursi.classList.add('hidden');
-            
-            // PASTIKAN TOMBOL TIDAK DI-DISABLED JIKA ADA PILIHAN
             btnPembayaran.disabled = false;
 
             const kursiNames = selectedCheckboxes.map(cb => {
-                // Ambil label kursi dari parent element
                 const label = document.querySelector(`label[for="${cb.id}"]`);
                 return label ? label.textContent.trim() : 'Kursi';
             });
@@ -186,7 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
             jumlahKursiText.textContent = jumlahKursi + ' kursi';
             
             const total = jumlahKursi * hargaPerKursi;
-            // Gunakan Intl.NumberFormat untuk format Rupiah yang benar
             const formatter = new Intl.NumberFormat('id-ID', {
                 style: 'currency',
                 currency: 'IDR',
@@ -198,35 +206,27 @@ document.addEventListener('DOMContentLoaded', function() {
             kursiDetail.classList.add('hidden');
             btnPembayaran.classList.add('hidden');
             infoPilihKursi.classList.remove('hidden');
-            // PASTIKAN TOMBOL DI-DISABLED JIKA TIDAK ADA PILIHAN
             btnPembayaran.disabled = true;
         }
     }
 
     checkboxes.forEach(checkbox => {
-        // Tambahkan event listener untuk update UI saat kursi dipilih/dibatalkan
         checkbox.addEventListener('change', updateCheckout);
     });
 
-    updateCheckout(); // Panggil saat awal untuk inisialisasi status tombol
+    updateCheckout();
 
-    // Event Listener untuk Tombol Pembayaran
     btnPembayaran.addEventListener('click', function(e) {
-        // e.preventDefault(); tidak lagi diperlukan di sini karena tombol bukan type="submit"
-        
         const selectedCheckboxes = Array.from(checkboxes).filter(cb => cb.checked);
         
         if (selectedCheckboxes.length === 0) {
-            // Tampilkan pesan error di UI (Mengganti alert)
             validationError.classList.remove('hidden');
             return;
         }
         
-        // Disabling tombol dan ganti teks untuk feedback ke user
         this.disabled = true; 
         this.textContent = 'Memproses...';
         
-        // PENTING: Memicu form submission, ini akan menuju ke BookingController@store
         bookingForm.submit();
     });
 });

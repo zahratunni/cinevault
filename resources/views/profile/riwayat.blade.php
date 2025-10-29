@@ -224,7 +224,7 @@
                                         Lanjutkan Pembayaran
                                     </a>
                                     <div class="mt-4 text-center text-sm text-yellow-800 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                                        ⏰ Mohon selesaikan pembayaran sebelum waktu kadaluarsa.
+                                        ⏰ Selesaikan pembayaran dalam <strong>10 menit</strong> atau pemesanan akan <strong>kadaluarsa</strong> dan dibatalkan otomatis.
                                     </div>
                                 @else
                                     <div class="w-full text-center text-gray-600 font-semibold py-3.5 px-6 rounded-lg bg-gray-100 border border-gray-200 text-base">

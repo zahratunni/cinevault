@@ -18,28 +18,33 @@ class BookingController extends Controller
     /**
      * Menampilkan halaman pemilihan kursi untuk jadwal tertentu.
      */
-    public function create($jadwal_id)
-    {
-        $jadwal = Jadwal::with(['film', 'studio'])->findOrFail($jadwal_id);
-        
-        // Ambil semua kursi di studio ini
-        $kursis = Kursi::where('studio_id', $jadwal->studio_id)
-            ->orderBy('baris')
-            ->orderBy('nomor_kursi')
-            ->get();
-        
-        // Ambil kursi yang sudah dibooking untuk jadwal ini
-        $bookedKursiIds = DetailPemesanan::whereHas('pemesanan', function($query) use ($jadwal_id) {
-            $query->where('jadwal_id', $jadwal_id)
-                  ->whereIn('status_pemesanan', ['Lunas', 'Menunggu Bayar']); 
-        })->pluck('kursi_id')->toArray();
-        
-        // Group kursi by baris untuk tampilan di view
-        $kursisByBaris = $kursis->groupBy('baris');
-        
-        return view('films.seat-selection', compact('jadwal', 'kursisByBaris', 'bookedKursiIds'));
-    }
+    /**
+ * Tampilkan halaman pemilihan kursi
+ */
+public function create($jadwal_id)
+{
+    $jadwal = Jadwal::with(['film', 'studio.kursis'])->findOrFail($jadwal_id);
 
+    // KUNING: Sudah lunas
+    $bookedKursiIds = DetailPemesanan::join('pemesanans', 'detail_pemesanans.pemesanan_id', '=', 'pemesanans.pemesanan_id')
+        ->where('pemesanans.jadwal_id', $jadwal_id)
+        ->where('pemesanans.status_pemesanan', 'Lunas')
+        ->pluck('detail_pemesanans.kursi_id')
+        ->toArray();
+
+    // ⭐ BIRU: Sedang menunggu bayar (customer lain)
+    $reservedKursiIds = DetailPemesanan::join('pemesanans', 'detail_pemesanans.pemesanan_id', '=', 'pemesanans.pemesanan_id')
+        ->where('pemesanans.jadwal_id', $jadwal_id)
+        ->where('pemesanans.status_pemesanan', 'Menunggu Bayar')
+        ->where('pemesanans.user_id', '!=', auth()->id())
+        ->pluck('detail_pemesanans.kursi_id')
+        ->toArray();
+
+    $kursisByBaris = $jadwal->studio->kursis->groupBy('baris');
+
+    // ⭐ NAMA VIEW: films.seat-selection
+    return view('films.seat-selection', compact('jadwal', 'kursisByBaris', 'bookedKursiIds', 'reservedKursiIds'));
+}
     /**
      * Memproses permintaan booking (membuat record Pemesanan).
      */

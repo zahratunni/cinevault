@@ -143,9 +143,9 @@
             <div class="bg-white rounded-lg shadow-md p-6 space-y-3">
                 <h2 class="text-lg font-bold mb-4">Proses Pembayaran</h2>
                 
-                <!-- Bayar Cash -->
-                <button onclick="showCashModal()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-semibold transition">
-                    <i class="fas fa-money-bill-wave mr-2"></i>Bayar Cash
+                <!-- ✅ Bayar Tunai (Pakai Modal Baru) -->
+                <button onclick="openModalTunai()" class="w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 font-semibold transition">
+                    <i class="fas fa-money-bill-wave mr-2"></i>Bayar Tunai
                 </button>
 
                 <!-- Bayar Online (Midtrans) -->
@@ -153,6 +153,22 @@
                    class="block w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold text-center transition">
                     <i class="fas fa-qrcode mr-2"></i>Bayar Online (QRIS/E-Wallet)
                 </a>
+
+                <!-- ⭐ Manual Callback untuk Testing -->
+                @if($pemesanan->pembayaran && $pemesanan->pembayaran->transaction_id)
+                <div class="border-t pt-3 mt-3">
+                    <p class="text-sm text-gray-600 mb-2 text-center font-medium">
+                        <i class="fas fa-info-circle mr-1"></i>Setelah customer bayar:
+                    </p>
+                    <a href="{{ route('kasir.midtrans.manualCallback', $pemesanan->pemesanan_id) }}" 
+                       class="block w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 font-semibold text-center transition shadow-md">
+                        <i class="fas fa-check-circle mr-2"></i>Konfirmasi Pembayaran Online
+                    </a>
+                    <p class="text-xs text-gray-500 text-center mt-2">
+                        Klik setelah customer selesai scan QRIS/bayar via e-wallet
+                    </p>
+                </div>
+                @endif
 
                 <!-- Batalkan -->
                 <button onclick="confirmCancel()" class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 font-semibold transition">
@@ -171,47 +187,104 @@
     </div>
 </div>
 
-<!-- Modal Pembayaran Cash -->
-<div id="cashModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        <h3 class="text-xl font-bold mb-4">Konfirmasi Pembayaran Cash</h3>
-        
-        <form action="{{ route('kasir.kelola.confirmCash', $pemesanan->pemesanan_id) }}" method="POST">
+<!-- ✅ Modal Pembayaran Tunai - DESIGN BARU -->
+<div id="modalTunai" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+        <form action="{{ route('kasir.pembayaran.confirmTunai', $pemesanan->pemesanan_id) }}" method="POST" id="formTunai">
             @csrf
             
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Total yang Harus Dibayar</label>
-                <div class="text-2xl font-bold text-blue-600">
-                    Rp {{ number_format($pemesanan->total_bayar, 0, ',', '.') }}
+            <!-- Modal Header -->
+            <div class="bg-orange-500 text-white px-6 py-4 rounded-t-xl">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold">
+                        <i class="fas fa-money-bill-wave mr-2"></i>
+                        Pembayaran Tunai
+                    </h3>
+                    <button type="button" onclick="closeModalTunai()" class="text-white hover:text-gray-200 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Nominal yang Dibayarkan</label>
-                <input type="number" 
-                       name="nominal_dibayar" 
-                       id="nominal_dibayar"
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                       placeholder="Masukkan nominal"
-                       min="{{ $pemesanan->total_bayar }}"
-                       required>
-            </div>
+            <!-- Modal Body -->
+            <div class="p-6">
+                <!-- Total Bayar -->
+                <div class="mb-6 p-4 bg-green-50 border-2 border-green-300 rounded-lg text-center">
+                    <p class="text-sm text-gray-600 mb-1">Total yang harus dibayar:</p>
+                    <p class="text-3xl font-bold text-green-700">
+                        Rp {{ number_format($pemesanan->total_bayar, 0, ',', '.') }}
+                    </p>
+                </div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Kembalian</label>
-                <div id="kembalian" class="text-xl font-bold text-green-600">
-                    Rp 0
+                <!-- Input Nominal -->
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Nominal Dibayar <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" 
+                           name="nominal_dibayar" 
+                           id="nominal_dibayar"
+                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:ring focus:ring-orange-200 text-xl font-bold text-center @error('nominal_dibayar') border-red-500 @enderror" 
+                           placeholder="0"
+                           value="{{ old('nominal_dibayar', $pemesanan->total_bayar) }}"
+                           min="{{ $pemesanan->total_bayar }}"
+                           required
+                           oninput="hitungKembalian()"
+                           autofocus>
+                    @error('nominal_dibayar')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Tampilan Kembalian -->
+                <div class="mb-6 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg text-center" id="kembalianBox" style="display: none;">
+                    <p class="text-sm text-gray-600 mb-1">Kembalian:</p>
+                    <p class="text-4xl font-bold text-yellow-600" id="kembalianAmount">Rp 0</p>
+                </div>
+
+                <!-- Quick Amount Buttons -->
+                <div class="mb-6">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Nominal Cepat:</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="setNominal({{ $pemesanan->total_bayar }})" 
+                                class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold transition-colors">
+                            Pas
+                        </button>
+                        <button type="button" onclick="setNominal(50000)" 
+                                class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold transition-colors">
+                            50rb
+                        </button>
+                        <button type="button" onclick="setNominal(100000)" 
+                                class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold transition-colors">
+                            100rb
+                        </button>
+                        <button type="button" onclick="setNominal(150000)" 
+                                class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold transition-colors">
+                            150rb
+                        </button>
+                        <button type="button" onclick="setNominal(200000)" 
+                                class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold transition-colors">
+                            200rb
+                        </button>
+                        <button type="button" onclick="setNominal(500000)" 
+                                class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold transition-colors">
+                            500rb
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex gap-3">
+            <!-- Modal Footer -->
+            <div class="px-6 pb-6 flex gap-3">
                 <button type="button" 
-                        onclick="closeCashModal()" 
-                        class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        onclick="closeModalTunai()"
+                        class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors">
+                    <i class="fas fa-times mr-2"></i>
                     Batal
                 </button>
                 <button type="submit" 
-                        class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        class="flex-1 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors">
+                    <i class="fas fa-check-circle mr-2"></i>
                     Konfirmasi
                 </button>
             </div>
@@ -228,30 +301,50 @@
 
 @push('scripts')
 <script>
-// Modal Cash
-function showCashModal() {
-    document.getElementById('cashModal').classList.remove('hidden');
+const totalBayar = {{ $pemesanan->total_bayar }};
+
+// ✅ Modal Tunai Functions
+function openModalTunai() {
+    document.getElementById('modalTunai').classList.remove('hidden');
+    document.getElementById('nominal_dibayar').focus();
+    hitungKembalian();
 }
 
-function closeCashModal() {
-    document.getElementById('cashModal').classList.add('hidden');
+function closeModalTunai() {
+    document.getElementById('modalTunai').classList.add('hidden');
 }
 
-// Hitung Kembalian
-document.getElementById('nominal_dibayar')?.addEventListener('input', function() {
-    const total = {{ $pemesanan->total_bayar }};
-    const dibayar = parseFloat(this.value) || 0;
-    const kembalian = dibayar - total;
+function setNominal(amount) {
+    document.getElementById('nominal_dibayar').value = amount;
+    hitungKembalian();
+}
+
+function hitungKembalian() {
+    const nominalDibayar = parseInt(document.getElementById('nominal_dibayar').value) || 0;
+    const kembalian = nominalDibayar - totalBayar;
     
-    const kembalianEl = document.getElementById('kembalian');
-    if (kembalian >= 0) {
-        kembalianEl.textContent = 'Rp ' + kembalian.toLocaleString('id-ID');
-        kembalianEl.classList.remove('text-red-600');
-        kembalianEl.classList.add('text-green-600');
+    const kembalianBox = document.getElementById('kembalianBox');
+    const kembalianAmount = document.getElementById('kembalianAmount');
+    
+    if (kembalian >= 0 && nominalDibayar >= totalBayar) {
+        kembalianBox.style.display = 'block';
+        kembalianAmount.textContent = 'Rp ' + kembalian.toLocaleString('id-ID');
+        kembalianAmount.classList.remove('text-red-600');
+        kembalianAmount.classList.add('text-yellow-600');
+    } else if (nominalDibayar > 0 && nominalDibayar < totalBayar) {
+        kembalianBox.style.display = 'block';
+        kembalianAmount.textContent = 'Kurang: Rp ' + Math.abs(kembalian).toLocaleString('id-ID');
+        kembalianAmount.classList.remove('text-yellow-600');
+        kembalianAmount.classList.add('text-red-600');
     } else {
-        kembalianEl.textContent = 'Nominal kurang!';
-        kembalianEl.classList.remove('text-green-600');
-        kembalianEl.classList.add('text-red-600');
+        kembalianBox.style.display = 'none';
+    }
+}
+
+// Close modal when clicking outside
+document.getElementById('modalTunai')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModalTunai();
     }
 });
 
@@ -262,11 +355,11 @@ function confirmCancel() {
     }
 }
 
-// Close modal ketika klik di luar
-document.getElementById('cashModal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeCashModal();
-    }
+// Auto open modal if validation error
+document.addEventListener('DOMContentLoaded', function() {
+    @error('nominal_dibayar')
+        openModalTunai();
+    @enderror
 });
 </script>
 @endpush

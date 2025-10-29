@@ -37,21 +37,6 @@
                 @endauth
             </ul>
 
-            <form action="{{ route('films.index') }}" method="GET" class="relative hidden md:block">
-                <input
-                    type="text"
-                    name="search"
-                    value="{{ request('search') }}"
-                    placeholder="Cari Film..."
-                    class="px-4 py-2 pr-10 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:border-[#66CCFF] focus:bg-white/20 transition w-64"
-                >
-                <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-[#66CCFF]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </button>
-            </form>
-
             <!-- AUTH / GUEST Buttons (Desktop) -->
             <div class="hidden lg:flex items-center space-x-4">
                 @guest
@@ -88,24 +73,6 @@
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="hidden lg:hidden fixed inset-0 bg-[#1A202C]/95 backdrop-blur-lg pt-20 px-6 transform -translate-x-full transition-transform duration-300 ease-in-out">
             <div class="max-w-md mx-auto">
-                <!-- Mobile Search -->
-                <div class="mb-6">
-                    <form action="{{ route('films.index') }}" method="GET" class="relative">
-                        <input
-                            type="text"
-                            name="search"
-                            value="{{ request('search') }}"
-                            placeholder="Cari Film..."
-                            class="w-full px-4 py-3 pr-10 rounded-full bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:border-[#66CCFF] text-lg"
-                        >
-                        <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-[#66CCFF]">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-
                 <!-- Mobile Navigation -->
                 <ul class="space-y-4 mb-8 text-lg font-semibold">
                     <li>
@@ -132,7 +99,7 @@
                     </li>
                     @endauth
 
-                    <li class="border-t border-gray-800 pt-4 mt-4 flex flex-col space-y-3"> {{-- Changed to flex-col and space-y --}}
+                    <li class="border-t border-gray-800 pt-4 mt-4 flex flex-col space-y-3">
                         @guest
                             <a href="{{ route('login') }}" class="block text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg">
                                 <i class="fas fa-sign-in-alt mr-2"></i>LOGIN
@@ -194,7 +161,8 @@
                 if (!mobileMenu.classList.contains('hidden')) {
                     mobileMenu.classList.add('hidden');
                     mobileMenu.classList.add('-translate-x-full');
-                    mobileMenuBtn.querySelector('svg').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>';
+                    mobileMenuBtn.querySelector('svg').innerHTML =
+                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>';
                 }
 
                 document.querySelector(this.getAttribute('href')).scrollIntoView({
@@ -209,14 +177,12 @@
                 const currentPath = window.location.pathname;
                 const homePath = "{{ route('home') }}";
 
-                // Memastikan '/home' juga dianggap home jika route('home') mengarah ke '/home'
                 const isHomePage = currentPath === homePath || (homePath === '/' && currentPath === '/home');
 
                 if (!isHomePage) {
                     e.preventDefault();
                     window.location.href = this.href;
                 }
-                // Jika sudah di halaman home, anchor scroll akan menangani
             });
         });
     });

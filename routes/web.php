@@ -53,10 +53,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 /*
 |--------------------------------------------------------------------------
-| Midtrans Callback (Public - No Auth)
+| Midtrans Callbacks (Public - No Auth, No CSRF)
 |--------------------------------------------------------------------------
 */
 Route::post('/payment/midtrans/callback', [MidtransController::class, 'callback'])->name('midtrans.callback');
+Route::post('/kasir/midtrans/callback', [KasirMidtransController::class, 'callback'])->name('kasir.midtrans.callback');
 
 /*
 |--------------------------------------------------------------------------
@@ -101,17 +102,6 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
 
 /*
 |--------------------------------------------------------------------------
-| Midtrans Callback (Public - No Auth)
-|--------------------------------------------------------------------------
-*/
-Route::post('/payment/midtrans/callback', [MidtransController::class, 'callback'])->name('midtrans.callback');
-
-// ⭐ TAMBAHKAN INI (Callback khusus untuk kasir)
-Route::post('/kasir/midtrans/callback', [KasirMidtransController::class, 'callback'])
-    ->name('kasir.midtrans.callback');
-
-/*
-|--------------------------------------------------------------------------
 | KASIR ROUTES
 |--------------------------------------------------------------------------
 */
@@ -124,22 +114,24 @@ Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::post('/pemesanan/store', [KasirPemesananController::class, 'store'])->name('pemesanan.store');
     Route::get('/kursi-available/{jadwal_id}', [KasirPemesananController::class, 'getKursiAvailable'])->name('kursi.available');
     
-    // ⭐ TAMBAHKAN INI (Kelola Pemesanan Offline)
+    // Kelola Pemesanan Offline
     Route::get('/kelola-pemesanan', [KasirPemesananController::class, 'kelolaPemesanan'])->name('kelola.pemesanan');
     Route::get('/kelola-pemesanan/{pemesanan_id}', [KasirPemesananController::class, 'detailPemesanan'])->name('kelola.detail');
-    Route::post('/kelola-pemesanan/{pemesanan_id}/confirm-cash', [KasirPemesananController::class, 'confirmCash'])->name('kelola.confirmCash');
     Route::post('/kelola-pemesanan/{pemesanan_id}/cancel', [KasirPemesananController::class, 'cancelPemesanan'])->name('kelola.cancel');
     
     // Pembayaran Offline
     Route::get('/pembayaran/{pemesanan_id}', [KasirPembayaranController::class, 'index'])->name('pembayaran.index');
     Route::post('/pembayaran/{pemesanan_id}/store', [KasirPembayaranController::class, 'store'])->name('pembayaran.store');
     Route::post('/pembayaran/{pemesanan_id}/confirm-tunai', [KasirPembayaranController::class, 'confirmTunai'])->name('pembayaran.confirmTunai');
-    Route::get('/pembayaran/{pemesanan_id}/midtrans', [KasirPembayaranController::class, 'createMidtrans'])->name('pembayaran.midtrans');
+    Route::get('/pembayaran/{pemesanan_id}/midtrans', [KasirPembayaranController::class, 'createMidtrans'])->name('pembayaran.qris');
     Route::get('/pembayaran/{pemesanan_id}/check-status', [KasirPembayaranController::class, 'checkStatus'])->name('pembayaran.checkStatus');
     
-    // ⭐ TAMBAHKAN INI (Midtrans Routes untuk Kasir)
+    // Midtrans untuk Kasir
     Route::get('/midtrans/create/{pemesanan_id}', [KasirMidtransController::class, 'createTransaction'])->name('midtrans.create');
     Route::get('/midtrans/finish/{pemesanan_id}', [KasirMidtransController::class, 'finish'])->name('midtrans.finish');
+    
+    // ⭐ MANUAL CALLBACK untuk Testing di Localhost
+    Route::get('/midtrans/manual-callback/{pemesanan_id}', [KasirMidtransController::class, 'manualCallback'])->name('midtrans.manualCallback');
     
     // Cetak Tiket
     Route::get('/search-tiket', [KasirTiketController::class, 'search'])->name('tiket.search');
@@ -149,29 +141,6 @@ Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->grou
     // Profile
     Route::get('/profile', [KasirProfileController::class, 'index'])->name('profile.index');
 });
-Route::get('/test-callback-kasir/{pemesanan_id}', function($pemesanan_id) {
-    $pembayaran = \App\Models\Pembayaran::where('pemesanan_id', $pemesanan_id)->first();
-    
-    if (!$pembayaran) {
-        return "Pembayaran tidak ditemukan";
-    }
-    
-    $pemesanan = $pembayaran->pemesanan;
-    
-    // Simulasi sukses
-    $pembayaran->update([
-        'status_pembayaran' => 'Lunas',
-        'status_verifikasi' => 'approved',
-        'verified_at' => now(),
-        'payment_type' => 'gopay',
-        'tanggal_pembayaran' => now(),
-    ]);
-    
-    $pemesanan->update(['status_pemesanan' => 'Lunas']);
-    
-    return redirect()->route('kasir.kelola.pemesanan')
-        ->with('success', 'Pembayaran berhasil dikonfirmasi (TEST MODE)');
-})->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -205,7 +174,7 @@ Route::middleware(['auth', 'role:Customer'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Testing Routes (Remove in Production)
+| Testing Routes (REMOVE IN PRODUCTION!)
 |--------------------------------------------------------------------------
 */
 Route::get('/test-midtrans-success/{pemesanan_id}', function($pemesanan_id) {
@@ -216,7 +185,6 @@ Route::get('/test-midtrans-success/{pemesanan_id}', function($pemesanan_id) {
         return redirect()->route('home')->with('error', 'Pemesanan tidak ditemukan');
     }
     
-    // Simulasi callback success dari Midtrans
     $pembayaran->update([
         'status_pembayaran' => 'Lunas',
         'status_verifikasi' => 'approved',
@@ -225,10 +193,31 @@ Route::get('/test-midtrans-success/{pemesanan_id}', function($pemesanan_id) {
         'tanggal_pembayaran' => now(),
     ]);
     
-    $pemesanan->update([
-        'status_pemesanan' => 'Lunas'
-    ]);
+    $pemesanan->update(['status_pemesanan' => 'Lunas']);
     
     return redirect()->route('invoice.show', $pemesanan_id)
         ->with('success', 'Pembayaran berhasil dikonfirmasi!');
+})->middleware('auth');
+
+Route::get('/test-callback-kasir/{pemesanan_id}', function($pemesanan_id) {
+    $pembayaran = \App\Models\Pembayaran::where('pemesanan_id', $pemesanan_id)->first();
+    
+    if (!$pembayaran) {
+        return "Pembayaran tidak ditemukan";
+    }
+    
+    $pemesanan = $pembayaran->pemesanan;
+    
+    $pembayaran->update([
+        'status_pembayaran' => 'Lunas',
+        'status_verifikasi' => 'approved',
+        'verified_at' => now(),
+        'payment_type' => 'gopay',
+        'tanggal_pembayaran' => now(),
+    ]);
+    
+    $pemesanan->update(['status_pemesanan' => 'Lunas']);
+    
+    return redirect()->route('kasir.kelola.pemesanan')
+        ->with('success', 'Pembayaran berhasil dikonfirmasi (TEST MODE)');
 })->middleware('auth');

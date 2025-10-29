@@ -53,46 +53,81 @@ class KasirPembayaranController extends Controller
    /**
  * Konfirmasi pembayaran TUNAI
  */
-public function confirmTunai($pemesanan_id)
+public function confirmTunai(Request $request, $pemesanan_id)
 {
     try {
         $pemesanan = Pemesanan::with('user')->findOrFail($pemesanan_id);
         
+        // Validasi status pemesanan
         if ($pemesanan->status_pemesanan === 'Lunas') {
-            return redirect()->route('kasir.tiket.show', $pemesanan_id)
-                ->with('info', 'Pembayaran sudah lunas sebelumnya.');
+            return back()->with('error', 'Pemesanan sudah lunas!');
         }
 
-        Pembayaran::updateOrCreate(
-            ['pemesanan_id' => $pemesanan_id],
-            [
+        if ($pemesanan->status_pemesanan === 'Dibatalkan') {
+            return back()->with('error', 'Pemesanan sudah dibatalkan!');
+        }
+
+        // Validasi nominal pembayaran
+        $request->validate([
+            'nominal_dibayar' => 'required|numeric|min:' . $pemesanan->total_bayar,
+        ], [
+            'nominal_dibayar.required' => 'Nominal pembayaran harus diisi',
+            'nominal_dibayar.numeric' => 'Nominal harus berupa angka',
+            'nominal_dibayar.min' => 'Nominal minimal Rp ' . number_format($pemesanan->total_bayar, 0, ',', '.'),
+        ]);
+
+        $kembalian = $request->nominal_dibayar - $pemesanan->total_bayar;
+
+        // Cek apakah sudah ada data pembayaran
+        $pembayaran = $pemesanan->pembayaran;
+
+        if (!$pembayaran) {
+            // Buat pembayaran baru
+            Pembayaran::create([
+                'pemesanan_id' => $pemesanan->pemesanan_id,
                 'user_id' => $pemesanan->user_id ?? auth()->id(),
                 'metode_bayar' => 'Tunai',
                 'jenis_pembayaran' => 'Offline',
-                'nominal_dibayar' => $pemesanan->total_bayar,
+                'nominal_dibayar' => $request->nominal_dibayar,
                 'tanggal_pembayaran' => now(),
                 'status_pembayaran' => 'Lunas',
                 'status_verifikasi' => 'approved',
                 'verified_at' => now(),
                 'verified_by' => auth()->id(),
-            ]
-        );
+            ]);
+        } else {
+            // Update pembayaran yang sudah ada
+            $pembayaran->update([
+                'metode_bayar' => 'Tunai',
+                'jenis_pembayaran' => 'Offline',
+                'nominal_dibayar' => $request->nominal_dibayar,
+                'status_pembayaran' => 'Lunas',
+                'status_verifikasi' => 'approved',
+                'tanggal_pembayaran' => now(),
+                'verified_at' => now(),
+                'verified_by' => auth()->id(),
+                'user_id' => $pemesanan->user_id ?? auth()->id(),
+            ]);
+        }
         
+        // Update status pemesanan menjadi Lunas
         $pemesanan->update(['status_pemesanan' => 'Lunas']);
         
         \Log::info('Kasir - Pembayaran Tunai', [
             'pemesanan_id' => $pemesanan_id,
             'kasir_id' => auth()->id(),
             'total' => $pemesanan->total_bayar,
+            'nominal_dibayar' => $request->nominal_dibayar,
+            'kembalian' => $kembalian,
         ]);
         
-        // ✅ Set session untuk trigger auto print
+        // ✅ Set session untuk trigger auto print dengan info kembalian
         return redirect()->route('kasir.tiket.show', $pemesanan_id)
-            ->with('success', 'Pembayaran tunai berhasil dikonfirmasi!')
-            ->with('auto_print', true);  // ✅ Trigger auto print
+            ->with('success', 'Pembayaran tunai berhasil dikonfirmasi! Kembalian: Rp ' . number_format($kembalian, 0, ',', '.'))
+            ->with('auto_print', true);
             
     } catch (\Exception $e) {
-        return back()->with('error', 'Error: ' . $e->getMessage());
+        return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
 }
 
@@ -180,7 +215,7 @@ $params = [
             'transaction_id' => $transaction_id,
         ]);
 
-        return view('kasir.pembayaran.midtrans', compact('pemesanan', 'snapToken'));
+        return view('kasir.pembayaran.qris', compact('pemesanan', 'snapToken'));
         
     } catch (\Exception $e) {
         return back()->with('error', 'Gagal membuat transaksi: ' . $e->getMessage());
