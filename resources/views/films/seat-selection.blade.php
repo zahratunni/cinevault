@@ -43,8 +43,16 @@
 
                                     @php
                                         $isBooked = in_array($kursi->kursi_id, $bookedKursiIds);
-                                        $isReserved = in_array($kursi->kursi_id, $reservedKursiIds ?? []);
-                                        $isDisabled = $isBooked || $isReserved;
+                                        $isReservedByOthers = in_array($kursi->kursi_id, $reservedKursiIds ?? []);
+                                        
+                                        // ⭐ CEK APAKAH INI PESANAN USER SENDIRI
+                                        $isMyReservation = \App\Models\DetailPemesanan::whereHas('pemesanan', function($q) use ($jadwal) {
+                                            $q->where('jadwal_id', $jadwal->jadwal_id)
+                                              ->where('user_id', auth()->id())
+                                              ->where('status_pemesanan', 'Menunggu Bayar');
+                                        })->where('kursi_id', $kursi->kursi_id)->exists();
+                                        
+                                        $isDisabled = $isBooked || $isReservedByOthers;
                                     @endphp
 
                                     <div class="relative">
@@ -53,14 +61,17 @@
                                             value="{{ $kursi->kursi_id }}" 
                                             id="kursi_{{ $kursi->kursi_id }}"
                                             class="peer hidden kursi-checkbox"
-                                            {{ $isDisabled ? 'disabled' : '' }}>
+                                            {{ $isDisabled ? 'disabled' : '' }}
+                                            {{ $isMyReservation ? 'checked' : '' }}>
                                         
                                         <label for="kursi_{{ $kursi->kursi_id }}" 
                                             class="block w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center text-xs font-medium
                                                 @if($isBooked)
                                                     bg-[#FFC107] border-2 border-[#FFC107] cursor-not-allowed text-white
-                                                @elseif($isReserved)
+                                                @elseif($isReservedByOthers)
                                                     bg-[#10B981] border-2 border-[#10B981] cursor-not-allowed text-white
+                                                @elseif($isMyReservation)
+                                                    bg-[#10B981] border-2 border-[#10B981] text-white cursor-pointer hover:bg-[#059669]
                                                 @else
                                                     bg-gray-100 border-2 border-gray-300 hover:border-[#007BFF] text-gray-700 cursor-pointer
                                                     peer-checked:bg-[#007BFF] peer-checked:border-[#007BFF] peer-checked:scale-110 peer-checked:text-white
@@ -214,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', updateCheckout);
     });
 
+    // Update on load untuk show kursi yang sudah dipilih sebelumnya
     updateCheckout();
 
     btnPembayaran.addEventListener('click', function(e) {

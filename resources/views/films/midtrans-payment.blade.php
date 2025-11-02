@@ -69,21 +69,13 @@
 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 
 <script type="text/javascript">
-// Log awal
 console.log('========================================');
 console.log('🔍 MIDTRANS PAYMENT PAGE LOADED');
 console.log('Pemesanan ID:', '{{ $pemesanan->pemesanan_id }}');
 console.log('Snap Token:', '{{ $snapToken }}');
-console.log('Snap library loaded?', typeof snap !== 'undefined');
 console.log('========================================');
 
 const payButton = document.getElementById('pay-button');
-
-if (!payButton) {
-    console.error('❌ PAY BUTTON NOT FOUND!');
-} else {
-    console.log('✅ Pay button found!');
-}
 
 payButton.addEventListener('click', function () {
     console.log('🔘 PAY BUTTON CLICKED!');
@@ -102,13 +94,7 @@ payButton.addEventListener('click', function () {
             
             alert('🎉 PEMBAYARAN BERHASIL!\n\nAnda akan diarahkan ke halaman invoice...');
             
-            const redirectUrl = '/test-midtrans-success/{{ $pemesanan->pemesanan_id }}';
-            console.log('Will redirect to:', redirectUrl);
-            
-            setTimeout(function() {
-                console.log('🔄 Redirecting now...');
-                window.location.href = redirectUrl;
-            }, 2000);
+            window.location.href = '/test-midtrans-success/{{ $pemesanan->pemesanan_id }}';
         },
         
         onPending: function(result) {
@@ -118,7 +104,7 @@ payButton.addEventListener('click', function () {
             console.log('========================================');
             
             alert('⏰ Pembayaran pending.\nSilakan selesaikan pembayaran Anda.');
-            window.location.href = '{{ route("payment.show", $pemesanan->pemesanan_id) }}';
+            window.location.href = '{{ route("profile.riwayat") }}';
         },
         
         onError: function(result) {
@@ -128,20 +114,16 @@ payButton.addEventListener('click', function () {
             console.log('========================================');
             
             alert('❌ Pembayaran gagal!\nSilakan coba lagi.');
-            
-            payButton.disabled = false;
-            payButton.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg> <span>Bayar Sekarang</span>';
+            window.location.href = '{{ route("profile.riwayat") }}';
         },
         
         onClose: function() {
             console.log('========================================');
-            console.log('🚪 POPUP CLOSED BY USER');
+            console.log('🚪 POPUP CLOSED BY USER - Redirect to Riwayat');
             console.log('========================================');
             
-            alert('🚪 Anda menutup popup pembayaran.');
-            
-            payButton.disabled = false;
-            payButton.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg> <span>Bayar Sekarang</span>';
+            // ⭐ REDIRECT KE RIWAYAT
+            window.location.href = '{{ route("profile.riwayat") }}';
         }
     });
 });

@@ -1,53 +1,90 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="bg-gray-100 min-h-screen pt-12 pb-8 font-sans antialiased"> {{-- Mengurangi padding atas dan bawah --}}
-    <div class="max-w-2xl mx-auto px-3 sm:px-4 lg:px-6"> {{-- Mengurangi max-width menjadi 2xl --}}
+<div class="bg-gray-50 min-h-screen pt-12 pb-10 font-sans antialiased">
+    <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8"> {{-- Mengurangi max-width ke xl untuk fokus --}}
         
-        <!-- Success Header -->
-        <div class="text-center mt-6 mb-7"> {{-- Mengurangi margin --}}
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-[#007BFF] rounded-full mb-2 shadow-md"> {{-- Ukuran ikon sukses sedikit diperkecil --}}
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                </svg>
-            </div>
-            <h1 class="text-2xl font-bold text-[#2C3E50] mb-1">Pembayaran Berhasil!</h1> {{-- Ukuran font H1 diperkecil --}}
-            <p class="text-gray-600 text-sm">Tiket Anda telah dikonfirmasi. Selamat menikmati film.</p> {{-- Ukuran font P diperkecil --}}
+        <!-- Header Utama Invoice - Tidak ada lagi "Pembayaran Berhasil!" -->
+        <div class="text-center mt-8 mb-10 md:mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-3 leading-tight">Invoice</h1> {{-- Judul diubah --}}
+            <p class="text-gray-600 text-base md:text-lg max-w-md mx-auto">Informasi lengkap mengenai tiket bioskop Anda.</p> {{-- Deskripsi diubah --}}
         </div>
 
-        <!-- Invoice Card - Lebih Compact -->
-        <div class="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden mb-6"> {{-- Mengurangi margin bawah --}}
+        <!-- Invoice Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-8">
             
-            <!-- Header dengan Kode Booking -->
-            <div class="bg-gradient-to-r from-[#0056B3] to-[#007BFF] text-white px-5 py-4 text-center"> {{-- Mengurangi padding --}}
-                <p class="text-xs uppercase tracking-wider opacity-90 mb-1">Invoice Pembelian Tiket</p> {{-- Ukuran font diperkecil --}}
-                <p class="text-xl font-extrabold tracking-wide mb-2">{{ $pemesanan->kode_transaksi }}</p> {{-- Ukuran font diperkecil --}}
-                <div class="inline-block bg-white/20 px-3 py-1 rounded-full"> {{-- Mengurangi padding --}}
-                    <p class="text-white text-xs font-semibold">✓ {{ $pemesanan->status_pemesanan }}</p> {{-- Ukuran font diperkecil --}}
-                </div>
+            <!-- Invoice Header with Booking Code -->
+            <div class="bg-gradient-to-r from-blue-700 to-blue-500 text-white px-6 py-5 text-center">
+                <p class="text-sm uppercase tracking-wider opacity-90 mb-1">Kode Booking Anda:</p> {{-- Penjelasan Kode Booking --}}
+                <p class="text-3xl md:text-4xl font-extrabold tracking-wide">{{ $pemesanan->kode_transaksi }}</p> {{-- Ukuran kode booking diperbesar --}}
             </div>
 
-            <!-- Body Invoice -->
-            <div class="p-5 space-y-6"> {{-- Mengurangi padding dan space-y --}}
+            <!-- Invoice Body -->
+            <div class="p-6 md:p-8 space-y-7">
                 
+                <!-- Status Pemesanan -->
+                <div class="text-center">
+                    @if($pemesanan->status_pemesanan === 'Lunas')
+                        <span class="inline-flex items-center gap-2 bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded-full font-semibold text-base">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Pemesanan Lunas
+                        </span>
+                    @elseif($pemesanan->status_pemesanan === 'Menunggu Bayar')
+                        <span class="inline-flex items-center gap-2 bg-yellow-100 border border-yellow-300 text-yellow-700 px-4 py-2 rounded-full font-semibold text-base animate-pulse">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Menunggu Pembayaran
+                        </span>
+                    @elseif($pemesanan->status_pemesanan === 'Kadaluarsa')
+                        <span class="inline-flex items-center gap-2 bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded-full font-semibold text-base">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Pemesanan Kadaluarsa
+                        </span>
+                    @else
+                        <span class="inline-flex items-center gap-2 bg-gray-100 border border-gray-300 text-gray-700 px-4 py-2 rounded-full font-semibold text-base">
+                            Status: {{ $pemesanan->status_pemesanan }}
+                        </span>
+                    @endif
+                </div>
+
                 <!-- Film Details Section -->
                 <div>
-                    <h2 class="text-xs font-bold text-[#007BFF] uppercase tracking-wider mb-3 flex items-center gap-2"> {{-- Ukuran font heading diperkecil --}}
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h2 class="text-sm font-bold text-blue-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
                         </svg>
                         Detail Film
                     </h2>
-                    <div class="flex gap-3 items-start border border-gray-200 rounded-lg p-3 bg-gray-50"> {{-- Mengurangi padding dan gap --}}
+                    <div class="flex flex-col sm:flex-row gap-4 items-start bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <img src="{{ asset($pemesanan->jadwal->film->poster_url) }}" 
                              alt="{{ $pemesanan->jadwal->film->judul }}" 
-                             class="w-20 h-32 object-cover rounded-md flex-shrink-0 shadow-sm"> {{-- Ukuran poster diperkecil --}}
+                             class="w-24 h-36 object-cover rounded-md flex-shrink-0 shadow-md">
                         <div class="flex-1 text-gray-700">
-                            <h3 class="text-lg font-bold text-[#2C3E50] mb-1">{{ $pemesanan->jadwal->film->judul }}</h3> {{-- Ukuran font H3 diperkecil --}}
-                            <div class="space-y-0.5 text-xs"> {{-- Ukuran font detail diperkecil dan space-y dikurangi --}}
-                                <p class="flex items-center gap-1.5"><i class="fas fa-desktop text-[#FFC107] text-sm"></i> <strong>Studio:</strong> {{ $pemesanan->jadwal->studio->nama_studio }}</p>
-                                <p class="flex items-center gap-1.5"><i class="fas fa-calendar-alt text-[#FFC107] text-sm"></i> <strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($pemesanan->jadwal->tanggal_tayang)->format('d F Y') }}</p>
-                                <p class="flex items-center gap-1.5"><i class="fas fa-clock text-[#FFC107] text-sm"></i> <strong>Waktu:</strong> {{ \Carbon\Carbon::parse($pemesanan->jadwal->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($pemesanan->jadwal->jam_selesai)->format('H:i') }} WIB</p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $pemesanan->jadwal->film->judul }}</h3>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <p class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+                                    </svg>
+                                    <strong>Studio:</strong> {{ $pemesanan->jadwal->studio->nama_studio }}
+                                </p>
+                                <p class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($pemesanan->jadwal->tanggal_tayang)->translatedFormat('d F Y') }}
+                                </p>
+                                <p class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <strong>Waktu:</strong> {{ \Carbon\Carbon::parse($pemesanan->jadwal->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($pemesanan->jadwal->jam_selesai)->format('H:i') }} WIB
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -57,16 +94,15 @@
 
                 <!-- Seats Section -->
                 <div>
-                    <h2 class="text-xs font-bold text-[#007BFF] uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <h2 class="text-sm font-bold text-blue-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         Kursi Anda
                     </h2>
-                    <div class="flex flex-wrap gap-1.5 text-gray-800"> {{-- Mengurangi gap --}}
+                    <div class="flex flex-wrap gap-2 text-gray-800">
                         @foreach($pemesanan->detailPemesanans as $detail)
-                        <span class="bg-[#FFC107] text-[#2C3E50] px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm"> {{-- Mengurangi padding dan ukuran font --}}
+                        <span class="bg-blue-100 text-blue-800 px-3.5 py-1.5 rounded-full text-sm font-semibold shadow-sm">
                             {{ $detail->kursi->kode_kursi }}
                         </span>
                         @endforeach
@@ -77,31 +113,31 @@
 
                 <!-- Payment Summary Section -->
                 <div>
-                    <h2 class="text-xs font-bold text-[#007BFF] uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h2 class="text-sm font-bold text-blue-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                         Rincian Pembayaran
                     </h2>
-                    <div class="bg-gray-50 rounded-lg p-3 space-y-2 border border-gray-200"> {{-- Mengurangi padding dan space-y --}}
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2 border border-gray-200">
                         <div class="flex justify-between text-sm text-gray-700">
                             <span>{{ $pemesanan->detailPemesanans->count() }} x Tiket @ Rp {{ number_format($pemesanan->jadwal->harga_reguler, 0, ',', '.') }}</span>
                             <span class="font-semibold">Rp {{ number_format($pemesanan->harga_dasar_total, 0, ',', '.') }}</span>
                         </div>
                         @if($pemesanan->pembayaran)
-                        <div class="flex justify-between text-xs text-gray-600">
+                        <div class="flex justify-between text-sm text-gray-600">
                             <span>Metode Pembayaran</span>
-                            <span>{{ $pemesanan->pembayaran->metode_bayar }}</span>
+                            <span class="font-medium">{{ $pemesanan->pembayaran->metode_bayar }}</span>
                         </div>
-                        <div class="flex justify-between text-xs text-gray-600">
+                        <div class="flex justify-between text-sm text-gray-600">
                             <span>Waktu Pembayaran</span>
-                            <span>{{ \Carbon\Carbon::parse($pemesanan->pembayaran->tanggal_pembayaran)->format('d/m/Y H:i') }} WIB</span>
+                            <span class="font-medium">{{ \Carbon\Carbon::parse($pemesanan->pembayaran->tanggal_pembayaran)->format('d/m/Y H:i') }} WIB</span>
                         </div>
                         @endif
                         <hr class="border-gray-200">
-                        <div class="flex justify-between items-center pt-1.5"> {{-- Mengurangi padding top --}}
-                            <span class="text-base font-bold text-[#2C3E50]">Total Dibayar</span> {{-- Ukuran font total dibayar diperkecil --}}
-                            <span class="text-xl font-extrabold text-[#007BFF]">Rp {{ number_format($pemesanan->total_bayar, 0, ',', '.') }}</span> {{-- Ukuran font total dibayar diperkecil --}}
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-lg font-bold text-gray-800">Total Dibayar</span>
+                            <span class="text-2xl font-extrabold text-blue-700">Rp {{ number_format($pemesanan->total_bayar, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -109,37 +145,48 @@
             </div>
 
             <!-- Footer Info -->
-            <div class="bg-[#EBF7FF] border-t border-[#007BFF]/30 px-5 py-4"> {{-- Mengurangi padding --}}
+            <div class="bg-blue-50 border-t border-blue-200 px-6 py-5">
                 <div class="flex items-start gap-3">
-                    <svg class="w-4 h-4 text-[#007BFF] flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"> {{-- Ukuran ikon diperkecil --}}
+                    <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <div class="flex-1 text-gray-700">
-                        <p class="font-bold text-sm mb-1.5">Penting:</p> {{-- Ukuran font diperkecil --}}
-                        <ul class="text-xs space-y-1">
-                            <li>• Mohon tukarkan tiket Anda di kasir dengan menunjukkan <strong>Kode Booking</strong> ini.</li>
-                            <li>• Datang <strong>15 menit</strong> sebelum jadwal tayang.</li>
-                            <li>• Simpan invoice ini sebagai bukti pembelian yang sah.</li>
+                        <p class="font-bold text-base mb-1.5">Informasi Penting:</p>
+                        <ul class="text-sm space-y-1.5 list-disc pl-5">
+                            <li>Mohon tunjukkan <strong>Kode Booking</strong> ini di kasir untuk menukarkan tiket Anda.</li>
+                            <li>Pastikan Anda datang ke bioskop <strong>minimal 15 menit</strong> sebelum jadwal tayang.</li>
+                            <li>Invoice ini adalah bukti pembelian yang sah. Harap simpan dengan baik.</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Action Buttons - Hanya tombol Riwayat Pemesanan -->
-        <div class="grid grid-cols-1 gap-4 mb-4"> {{-- Hanya satu kolom --}}
-            <a href="{{ route('profile.riwayat') }}" class="bg-gray-200 hover:bg-gray-300 text-[#2C3E50] font-semibold py-3 rounded-lg transition-all text-center flex items-center justify-center gap-2">
-                <i class="fas fa-history"></i>
-                Riwayat Pemesanan
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 gap-4 mt-8 mb-6">
+            <a href="{{ route('profile.riwayat') }}" 
+               class="inline-flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm transform hover:scale-105">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004 12v1a8.001 8.001 0 0115.356-2m-6.356-5H20v5"></path>
+                </svg>
+                Lihat Semua Riwayat Pemesanan
             </a>
-            {{-- Tombol Kembali ke Beranda dihilangkan --}}
+            @if($pemesanan->status_pemesanan === 'Menunggu Bayar')
+                <a href="{{ route('payment.show', $pemesanan->pemesanan_id) }}" 
+                   class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500 to-yellow-400 hover:from-yellow-600 hover:to-yellow-500 text-gray-900 font-bold py-3.5 px-6 rounded-xl transition-all shadow-md text-base transform hover:scale-105">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                    Lanjutkan Pembayaran
+                </a>
+            @endif
         </div>
 
-        <p class="text-center text-xs text-gray-500 mt-4"> {{-- Mengurangi margin top --}}
-            <svg class="w-3 h-3 inline-block mr-1 text-[#007BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <p class="text-center text-xs text-gray-500 mt-6 flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
             </svg>
-            Transaksi Anda aman & terenkripsi
+            Transaksi Anda aman dan terenkripsi.
         </p>
 
     </div>
@@ -147,14 +194,35 @@
 
 <!-- Notifikasi Success -->
 @if(session('success'))
-<div class="fixed top-16 right-4 bg-[#007BFF] text-white px-4 py-2.5 rounded-lg shadow-lg z-50 animate-bounce text-sm"> {{-- Mengurangi padding dan top --}}
-    <p class="font-bold">✓ {{ session('success') }}</p>
+<div class="fixed top-6 right-6 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg z-50 animate-bounce-custom text-base flex items-center gap-2">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+    </svg>
+    <p class="font-bold">{{ session('success') }}</p>
 </div>
 <script>
+    const style = document.createElement('style');
+    style.innerHTML = `
+    @keyframes bounce-custom {
+      0%, 100% {
+        transform: translateY(-25%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+      }
+      50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+      }
+    }
+    .animate-bounce-custom {
+        animation: bounce-custom 1s infinite;
+    }
+    `;
+    document.head.appendChild(style);
+
     setTimeout(() => {
-        const notification = document.querySelector('.fixed.top-16');
+        const notification = document.querySelector('.fixed.top-6');
         if (notification) notification.remove();
-    }, 3000);
+    }, 4000);
 </script>
 @endif
 @endsection

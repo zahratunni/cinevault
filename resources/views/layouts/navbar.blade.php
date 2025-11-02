@@ -1,11 +1,11 @@
 {{-- resources/views/layouts/navbar.blade.php --}}
-<nav class="absolute top-0 left-0 w-full z-50 transition-all duration-300 bg-[#1A202C] shadow-lg font-sans" id="navbar">
+<nav class="absolute top-0 left-0 w-full z-50 transition-all duration-300 bg-[#1A202C] shadow-lg font-sans" id="navbar"> {{-- Tetap bg-[#1A202C] --}}
     <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
 
             <!-- Logo -->
             <div class="flex items-center">
-                <a href="{{ route('home') }}" class="text-2xl font-extrabold">
+                <a href="{{ route('home') }}" class="text-2xl font-black"> {{-- Ubah font-extrabold menjadi font-black --}}
                     <span class="text-[#66CCFF]">CINE</span><span class="text-white">VAULT</span>
                 </a>
             </div>
@@ -41,18 +41,18 @@
             <div class="hidden lg:flex items-center space-x-4">
                 @guest
                     <a href="{{ route('login') }}"
-                       class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-[#007BFF]/50">
+                       class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl"> {{-- Tetap biru sesuai request --}}
                         LOGIN
                     </a>
                     <a href="{{ route('register') }}"
-                       class="bg-gray-700 text-white px-6 py-2 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">
+                       class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl"> {{-- REGISTER jadi biru --}}
                         REGISTER
                     </a>
                 @else
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                                class="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition shadow-lg">
+                                class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl"> {{-- LOGOUT jadi biru --}}
                             LOGOUT
                         </button>
                     </form>
@@ -101,16 +101,16 @@
 
                     <li class="border-t border-gray-800 pt-4 mt-4 flex flex-col space-y-3">
                         @guest
-                            <a href="{{ route('login') }}" class="block text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg">
+                            <a href="{{ route('login') }}" class="block text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg"> {{-- LOGIN jadi biru --}}
                                 <i class="fas fa-sign-in-alt mr-2"></i>LOGIN
                             </a>
-                            <a href="{{ route('register') }}" class="block text-center bg-gray-700 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">
+                            <a href="{{ route('register') }}" class="block text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg"> {{-- REGISTER jadi biru --}}
                                 <i class="fas fa-user-plus mr-2"></i>REGISTER
                             </a>
                         @else
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-center bg-red-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-700 transition shadow-lg">
+                                <button type="submit" class="w-full text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg"> {{-- LOGOUT jadi biru --}}
                                     <i class="fas fa-sign-out-alt mr-2"></i>LOGOUT
                                 </button>
                             </form>
