@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="min-h-screen bg-[#F9FAFB] flex items-center justify-center py-20 px-6">
-    {{-- Menghilangkan 'animate__animated animate__fadeInUp' --}}
     <div class="max-w-md w-full">
         <!-- Logo -->
         <div class="text-center mb-10">

@@ -10,7 +10,8 @@
     <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg text-white p-8">
         <div class="flex items-center space-x-6">
             <div class="flex-shrink-0">
-                <div class="h-24 w-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center text-white text-4xl font-bold border-4 border-white border-opacity-30">
+                <div class="h-24 w-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center text-white 
+                text-4xl font-bold border-4 border-white border-opacity-30">
                     {{ substr($admin->username, 0, 1) }}
                 </div>
             </div>
@@ -52,7 +53,8 @@
                     Email <span class="text-red-500">*</span>
                 </label>
                 <input type="email" name="email" value="{{ old('email', $admin->email) }}" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('email') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
+                     focus:border-transparent @error('email') border-red-500 @enderror"
                     placeholder="admin@cinevault.com">
                 @error('email')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -65,7 +67,8 @@
                     Nama Lengkap <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $admin->nama_lengkap) }}" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nama_lengkap') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
+                     focus:border-transparent @error('nama_lengkap') border-red-500 @enderror"
                     placeholder="Nama lengkap Anda">
                 @error('nama_lengkap')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -78,7 +81,8 @@
                     No. Telepon <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="no_telepon" value="{{ old('no_telepon', $admin->no_telepon) }}" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('no_telepon') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                    focus:border-transparent @error('no_telepon') border-red-500 @enderror"
                     placeholder="08123456789">
                 @error('no_telepon')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -123,7 +127,8 @@
                     Password Lama <span class="text-red-500">*</span>
                 </label>
                 <input type="password" name="current_password" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('current_password') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
+                     focus:border-transparent @error('current_password') border-red-500 @enderror"
                     placeholder="Masukkan password lama">
                 @error('current_password')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -138,7 +143,8 @@
                         Password Baru <span class="text-red-500">*</span>
                     </label>
                     <input type="password" name="password" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                        focus:border-transparent @error('password') border-red-500 @enderror"
                         placeholder="Minimal 8 karakter">
                     @error('password')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

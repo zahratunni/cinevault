@@ -1,35 +1,20 @@
 {{-- resources/views/layouts/footer.blade.php --}}
 <footer class="bg-[#1A202C] border-t border-[#2D3748] text-white relative overflow-hidden">
-    {{-- Gambar kursi bioskop sebagai background samar --}}
-    <div class="absolute inset-0 z-0 opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/black-linen.png');"></div>
-    {{-- Gambar ikon kursi bioskop di pojok --}}
-    <img src="https://via.placeholder.com/150/66CCFF/FFFFFF?text=Seat+Icon" 
-         alt="Cinema Seats Icon" 
-         class="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-15 rotate-12 transform translate-x-1/4 translate-y-1/4 select-none pointer-events-none z-10"
-         style="filter: grayscale(100%) brightness(50%);"
-    >
-    <img src="https://via.placeholder.com/150/007BFF/FFFFFF?text=Seat+Icon" 
-         alt="Cinema Seats Icon" 
-         class="absolute top-0 left-0 w-24 h-24 md:w-36 md:h-36 opacity-10 -rotate-12 transform -translate-x-1/4 -translate-y-1/4 select-none pointer-events-none z-10"
-         style="filter: grayscale(100%) brightness(50%);"
-    >
-
-
-    <div class="max-w-7xl mx-auto px-6 py-16 relative z-20"> {{-- Meningkatkan padding Y dan z-index --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12"> {{-- Meningkatkan gap --}}
+    <div class="max-w-7xl mx-auto px-6 py-16 relative z-20">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
             
             {{-- Kolom 1: Brand & Deskripsi --}}
             <div class="lg:col-span-2">
-                <h2 class="text-3xl md:text-4xl font-extrabold mb-5"> {{-- Meningkatkan ukuran & ketebalan font --}}
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-5">
                     <span class="text-[#66CCFF]">CINE</span><span class="text-white">VAULT</span>
                 </h2>
                 <p class="text-gray-400 text-sm md:text-base leading-relaxed mb-6 max-w-md">
                     Nikmati pengalaman menonton terbaik dengan pemesanan tiket yang cepat, mudah, dan terpercaya. 
                     Kami hadir untuk membuat setiap momen sinematik Anda lebih berkesan.
                 </p>
-                <div class="flex space-x-5 mt-6"> {{-- Meningkatkan spacing --}}
+                <div class="flex space-x-5 mt-6">
                     <a href="https://facebook.com" target="_blank" class="text-gray-400 hover:text-[#007BFF] transition-colors duration-300 text-2xl">
-                        <i class="fab fa-facebook-f"></i> {{-- Menggunakan ikon yang lebih modern --}}
+                        <i class="fab fa-facebook-f"></i>
                     </a>
                     <a href="https://instagram.com" target="_blank" class="text-gray-400 hover:text-[#007BFF] transition-colors duration-300 text-2xl">
                         <i class="fab fa-instagram"></i>
@@ -45,71 +30,97 @@
 
             {{-- Kolom 2: Navigasi --}}
             <div>
-                <h3 class="text-xl font-bold mb-5 text-[#66CCFF]">NAVIGASI</h3> {{-- Meningkatkan ukuran & ketebalan font --}}
-                <ul class="space-y-3"> {{-- Meningkatkan spacing --}}
+                <h3 class="text-xl font-bold mb-5 text-[#66CCFF]">NAVIGASI</h3>
+                <ul class="space-y-3">
                     <li>
-                        <a href="{{ url('/') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
+                        <a href="{{ route('home') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base flex items-center group">
+                            <i class="fas fa-home mr-2 text-[#66CCFF] group-hover:text-white transition-colors"></i>
                             Home
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('/film') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
+                        <a href="{{ route('home') }}#playing-now" class="text-gray-300 hover:text-white transition-colors duration-300 text-base flex items-center group">
+                            <i class="fas fa-film mr-2 text-[#66CCFF] group-hover:text-white transition-colors"></i>
                             Film
                         </a>
                     </li>
+                    @auth
                     <li>
-                        <a href="{{ url('/about') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
-                            About
+                        <a href="{{ route('profile.index') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base flex items-center group">
+                            <i class="fas fa-user-circle mr-2 text-[#66CCFF] group-hover:text-white transition-colors"></i>
+                            Profile
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('/login') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
+                        <a href="{{ route('profile.riwayat') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base flex items-center group">
+                            <i class="fas fa-receipt mr-2 text-[#66CCFF] group-hover:text-white transition-colors"></i>
+                            Riwayat
+                        </a>
+                    </li>
+                    @endauth
+                    @guest
+                    <li>
+                        <a href="{{ route('login') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base flex items-center group">
+                            <i class="fas fa-sign-in-alt mr-2 text-[#66CCFF] group-hover:text-white transition-colors"></i>
                             Login
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('/register') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
+                        <a href="{{ route('register') }}" class="text-gray-300 hover:text-white transition-colors duration-300 text-base flex items-center group">
+                            <i class="fas fa-user-plus mr-2 text-[#66CCFF] group-hover:text-white transition-colors"></i>
                             Register
                         </a>
                     </li>
+                    @endguest
                 </ul>
             </div>
 
-            {{-- Kolom 3: Bantuan & Info --}}
+            {{-- Kolom 3: Kontak Kami --}}
             <div>
-                <h3 class="text-xl font-bold mb-5 text-[#66CCFF]">BANTUAN</h3> {{-- Meningkatkan ukuran & ketebalan font --}}
-                <ul class="space-y-3"> {{-- Meningkatkan spacing --}}
-                    <li>
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
-                            FAQ
-                        </a>
+                <h3 class="text-xl font-bold mb-5 text-[#66CCFF]">KONTAK KAMI</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start group">
+                        <i class="fas fa-envelope mr-3 text-[#66CCFF] mt-1"></i>
+                        <div>
+                            <p class="text-gray-400 text-xs mb-1">Email</p>
+                            <a href="mailto:info@cinevault.com" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
+                                info@cinevault.com
+                            </a>
+                        </div>
                     </li>
-                    <li>
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
-                            Cara Pesan Tiket
-                        </a>
+                    <li class="flex items-start group">
+                        <i class="fas fa-phone mr-3 text-[#66CCFF] mt-1"></i>
+                        <div>
+                            <p class="text-gray-400 text-xs mb-1">Telepon</p>
+                            <a href="tel:+622112345678" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
+                                (021) 1234-5678
+                            </a>
+                        </div>
                     </li>
-                    <li>
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
-                            Syarat & Ketentuan
-                        </a>
+                    <li class="flex items-start group">
+                        <i class="fab fa-whatsapp mr-3 text-[#66CCFF] mt-1"></i>
+                        <div>
+                            <p class="text-gray-400 text-xs mb-1">WhatsApp</p>
+                            <a href="https://wa.me/628123456789" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
+                                +62 812-3456-7890
+                            </a>
+                        </div>
                     </li>
-                    <li>
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
-                            Kebijakan Privasi
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 text-base">
-                            Hubungi Kami
-                        </a>
+                    <li class="flex items-start group">
+                        <i class="fas fa-map-marker-alt mr-3 text-[#66CCFF] mt-1"></i>
+                        <div>
+                            <p class="text-gray-400 text-xs mb-1">Alamat</p>
+                            <p class="text-gray-300 text-base leading-relaxed">
+                                Jakarta, Indonesia
+                            </p>
+                        </div>
                     </li>
                 </ul>
             </div>
         </div>
 
         {{-- Copyright --}}
-        <div class="border-t border-[#2D3748] pt-8 mt-8 text-center text-gray-500 text-sm"> {{-- Meningkatkan padding dan warna border --}}
+        <div class="border-t border-[#2D3748] pt-8 mt-8 text-center text-gray-500 text-sm">
             &copy; {{ date('Y') }} CineVault. All rights reserved. Made with <i class="fas fa-heart text-red-500 mx-1"></i> by YourCompany.
         </div>
     </div>

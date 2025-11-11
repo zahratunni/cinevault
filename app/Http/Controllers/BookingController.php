@@ -172,6 +172,7 @@ public function create($jadwal_id)
     // 🔥 REDIRECT KE VIEW AUTO-POPUP (BUKAN KE ROUTE midtrans.create)
     return view('films.midtrans-auto-popup', compact('pemesanan', 'snapToken'));
 
+// ga dipakai
 } catch (\Exception $e) {
     // Jika gagal generate token, redirect ke payment manual
     return redirect()->route('payment.show', $pemesanan->pemesanan_id)
@@ -179,6 +180,7 @@ public function create($jadwal_id)
 }
     }
 
+    //gaada ini ga dipakai
     /**
      * Menampilkan halaman sukses booking dengan detail pemesanan.
      */

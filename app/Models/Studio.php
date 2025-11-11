@@ -16,15 +16,10 @@ class Studio extends Model
      protected $fillable = [
         'nama_studio', 'kapasitas', 'created_by', 'status_studio'
     ];
-   
-
-    // Studio memiliki banyak Kursi
     public function kursis(): HasMany
     {
         return $this->hasMany(Kursi::class, 'studio_id', 'studio_id');
     }
-    
-    // Studio memiliki banyak Jadwal tayang
     public function jadwals(): HasMany
     {
         return $this->hasMany(Jadwal::class, 'studio_id', 'studio_id');
@@ -32,7 +27,6 @@ class Studio extends Model
 
     public function createdBy(): BelongsTo
     {
-    // Model hanya bilang: 'created_by' adalah Foreign Key yang merujuk ke User.
     return $this->belongsTo(User::class, 'created_by', 'user_id');
     }
 }

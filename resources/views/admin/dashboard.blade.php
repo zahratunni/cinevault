@@ -198,7 +198,8 @@
                             <div class="flex-1">
                                 <p class="font-medium text-gray-800">{{ $booking->kode_transaksi }}</p>
                                 <p class="text-sm text-gray-600">{{ $booking->jadwal->film->judul ?? 'N/A' }}</p>
-                                <p class="text-xs text-gray-500">{{ $booking->user->username ?? 'N/A' }} • {{ \Carbon\Carbon::parse($booking->tanggal_pemesanan)->format('d M Y') }}</p>
+                                <p class="text-xs text-gray-500">{{ $booking->user->username ?? 'N/A' }} •
+                                     {{ \Carbon\Carbon::parse($booking->tanggal_pemesanan)->format('d M Y') }}</p>
                             </div>
                             <div class="text-right">
                                 <p class="font-semibold text-gray-800">Rp {{ number_format($booking->total_bayar, 0, ',', '.') }}</p>

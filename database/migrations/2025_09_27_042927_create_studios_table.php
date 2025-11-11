@@ -14,18 +14,15 @@ class CreateStudiosTable extends Migration
     public function up()
     {
         Schema::create('studios', function (Blueprint $table) {
-           $table->id('studio_id'); // INT (Primary Key)
+           $table->id('studio_id'); 
             // Data Utama
             $table->string('nama_studio', 50)->unique(); // Nama ruangan harus unik
             $table->integer('kapasitas'); // Jumlah total kursi
-            // Kolom Status (Sesuai diskusi sebelumnya)
-            // Kode yang benar: Menunjuk ke 'user_id' di tabel 'users'
             $table->foreignId('created_by')
-                     ->nullable() // Ditambahkan karena 'created_by' adalah kolom audit (boleh null)
-                    ->constrained('users', 'user_id') // <== PENTING: Menentukan PK target
+                     ->nullable() 
+                    ->constrained('users', 'user_id') 
                      ->onDelete('restrict');
-            // Kolom Audit
-            $table->timestamps(); // Menciptakan created_at dan updated_at
+            $table->timestamps();
         });
     }
 

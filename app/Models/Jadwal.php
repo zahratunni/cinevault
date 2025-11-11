@@ -22,15 +22,11 @@ class Jadwal extends Model
 
     // Ini memungkinkan kita menggunakan $jadwal->is_purchasable di View
     protected $appends = ['is_purchasable']; 
-
-   
-
     // Jadwal dimiliki oleh satu Film
     public function film(): BelongsTo
     {
         return $this->belongsTo(Film::class, 'film_id', 'film_id');
     }
-
     // Jadwal dimiliki oleh satu Studio
     public function studio(): BelongsTo
     {
@@ -41,7 +37,6 @@ class Jadwal extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'user_id');
     }
-
     // Jadwal memiliki banyak Pemesanan
     public function pemesanans(): HasMany
     {
@@ -68,7 +63,6 @@ class Jadwal extends Model
         }
         return $now->between($purchaseStartTime, $purchaseEndTime, false);
     }
-
     public function getIsFullAttribute(): bool
 {
     $totalKursi = $this->studio->kursis()->count(); // total kursi di studio
@@ -78,5 +72,4 @@ class Jadwal extends Model
 
     return $kursiTerpesan >= $totalKursi;
 }
-
 }

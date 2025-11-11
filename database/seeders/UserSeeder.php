@@ -20,10 +20,10 @@ class UserSeeder extends Seeder
             'user_id' => 1, 
             'username' => 'owner_utama',
             'email' => 'owner@cinevault.com',
-            'password' => Hash::make('password123'), // Login: owner@cinevault.com / password123
+            'password' => Hash::make('password123'), 
             'nama_lengkap' => 'Pemilik Bioskop',
             'no_telepon' => '08100000000',
-            'role' => 'Owner', // <-- Peran Owner
+            'role' => 'Owner', 
         ]);
 
         // 2. Akun ADMIN (Mengelola Operasional CRUD)
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Administrator Operasional',
             'no_telepon' => '08111111111',
-            'role' => 'Admin', // <-- Peran Admin
+            'role' => 'Admin',
         ]);
 
         // 3. Akun KASIR (Untuk Verifikasi Transaksi)
@@ -45,7 +45,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Kasir Loket A',
             'no_telepon' => '08222222222',
-            'role' => 'Kasir', // <-- Peran Kasir
+            'role' => 'Kasir', 
         ]);
         
         // 4. Akun CUSTOMER (Pengguna Aplikasi)
@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password123'), 
             'nama_lengkap' => 'Jeje Customer',
             'no_telepon' => '08333333333',
-            'role' => 'Customer', // <-- Peran Customer
+            'role' => 'Customer', 
         ]);
     }
 }

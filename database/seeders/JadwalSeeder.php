@@ -109,7 +109,8 @@ class JadwalSeeder extends Seeder
                             'harga_reguler' => $hargaReguler,
                             'status_jadwal' => 'Active',
                         ]);
-                        $this->command->info("  🔁 {$film->judul} — ditambahkan 1 jadwal (agar tidak kosong di {$tanggal->format('Y-m-d')})");
+                        $this->command->info("  🔁 {$film->judul} — ditambahkan 1 jadwal (agar tidak kosong di
+                         {$tanggal->format('Y-m-d')})");
                     }
                 }
 

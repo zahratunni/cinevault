@@ -9,9 +9,7 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    /**
-     * Show login form
-     */
+    //formlogin
     public function showLogin()
     {
         if (Auth::check()) {
@@ -19,22 +17,15 @@ class AuthController extends Controller
         }
         return view('auth.login');
     }
-
-    /**
-     * Process login
-     */
+    //proses login
     public function login(Request $request)
     {
         $credentials = $request->validate([
             'no_telepon' => 'required|string',
             'password' => 'required',
         ]);
-
-        // Login menggunakan nomor telepon
         if (Auth::attempt(['no_telepon' => $request->no_telepon, 'password' => $request->password], $request->filled('remember'))) {
             $request->session()->regenerate();
-            
-            // Redirect berdasarkan role
             return $this->redirectBasedOnRole();
         }
 

@@ -41,18 +41,18 @@
             <div class="hidden lg:flex items-center space-x-4">
                 @guest
                     <a href="{{ route('login') }}"
-                       class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl"> {{-- Tetap biru sesuai request --}}
+                       class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl"> 
                         LOGIN
                     </a>
                     <a href="{{ route('register') }}"
-                       class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl"> {{-- REGISTER jadi biru --}}
+                       class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl"> 
                         REGISTER
                     </a>
                 @else
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                                class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl"> {{-- LOGOUT jadi biru --}}
+                                class="bg-[#007BFF] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg hover:shadow-xl">
                             LOGOUT
                         </button>
                     </form>
@@ -71,29 +71,34 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden lg:hidden fixed inset-0 bg-[#1A202C]/95 backdrop-blur-lg pt-20 px-6 transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <div id="mobileMenu" class="hidden lg:hidden fixed inset-0 bg-[#1A202C]/95 backdrop-blur-lg pt-20 px-6 transform -translate-x-full transition-transform 
+        duration-300 ease-in-out">
             <div class="max-w-md mx-auto">
                 <!-- Mobile Navigation -->
                 <ul class="space-y-4 mb-8 text-lg font-semibold">
                     <li>
-                        <a href="{{ route('home') }}" class="block text-gray-200 hover:text-[#66CCFF] transition py-2 {{ request()->is('/') ? 'text-[#66CCFF]' : '' }}">
+                        <a href="{{ route('home') }}" class="block text-gray-200 hover:text-[#66CCFF] transition py-2 {{ request()->is('/') 
+                        ? 'text-[#66CCFF]' : '' }}">
                             <i class="fas fa-home mr-3 w-6 text-center"></i>HOME
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('home') }}#playing-now" class="block text-gray-200 hover:text-[#66CCFF] transition py-2 {{ request()->is('film*') ? 'text-[#66CCFF]' : '' }}">
+                        <a href="{{ route('home') }}#playing-now" class="block text-gray-200 hover:text-[#66CCFF] transition py-2 {{ request()->is('film*') 
+                        ? 'text-[#66CCFF]' : '' }}">
                             <i class="fas fa-film mr-3 w-6 text-center"></i>FILM
                         </a>
                     </li>
 
                     @auth
                     <li>
-                        <a href="{{ route('profile.index') }}" class="block text-gray-200 hover:text-[#66CCFF] transition py-2 {{ request()->is('profile') ? 'text-[#66CCFF]' : '' }}">
+                        <a href="{{ route('profile.index') }}" class="block text-gray-200 hover:text-[#66CCFF] transition py-2 {{ request()->is('profile') 
+                        ? 'text-[#66CCFF]' : '' }}">
                             <i class="fas fa-user-circle mr-3 w-6 text-center"></i>PROFILE
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('profile.riwayat') }}" class="block text-gray-200 hover:text-[#66CCFF] transition py-2 {{ request()->is('profile/riwayat') ? 'text-[#66CCFF]' : '' }}">
+                        <a href="{{ route('profile.riwayat') }}" class="block text-gray-200 hover:text-[#66CCFF] transition py-2 {{ request()->is('profile/riwayat') 
+                        ? 'text-[#66CCFF]' : '' }}">
                             <i class="fas fa-receipt mr-3 w-6 text-center"></i>RIWAYAT
                         </a>
                     </li>
@@ -101,16 +106,19 @@
 
                     <li class="border-t border-gray-800 pt-4 mt-4 flex flex-col space-y-3">
                         @guest
-                            <a href="{{ route('login') }}" class="block text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg"> {{-- LOGIN jadi biru --}}
+                            <a href="{{ route('login') }}" class="block text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] 
+                            transition shadow-lg"> 
                                 <i class="fas fa-sign-in-alt mr-2"></i>LOGIN
                             </a>
-                            <a href="{{ route('register') }}" class="block text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg"> {{-- REGISTER jadi biru --}}
+                            <a href="{{ route('register') }}" class="block text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3]
+                             transition shadow-lg">
                                 <i class="fas fa-user-plus mr-2"></i>REGISTER
                             </a>
                         @else
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] transition shadow-lg"> {{-- LOGOUT jadi biru --}}
+                                <button type="submit" class="w-full text-center bg-[#007BFF] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#0056B3] 
+                                transition shadow-lg"> 
                                     <i class="fas fa-sign-out-alt mr-2"></i>LOGOUT
                                 </button>
                             </form>
@@ -124,7 +132,6 @@
 
 {{-- Alpine.js not needed anymore for dropdown in navbar, but kept for other x-data usage --}}
 <script src="//unpkg.com/alpinejs" defer></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');

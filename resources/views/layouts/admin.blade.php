@@ -18,7 +18,8 @@
     <div class="flex h-screen overflow-hidden">
         
         <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform -translate-x-full lg:translate-x-0 lg:static transition-transform duration-300 ease-in-out">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform -translate-x-full 
+        lg:translate-x-0 lg:static transition-transform duration-300 ease-in-out">
             <div class="flex flex-col h-full">
                 
                 <!-- Logo -->
@@ -34,7 +35,8 @@
                     <ul class="space-y-2">
                         <!-- Dashboard -->
                         <li>
-                            <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.dashboard') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 
+                            rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.dashboard') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-home w-5"></i>
                                 <span class="ml-3">Dashboard</span>
                             </a>
@@ -42,7 +44,8 @@
 
                         <!-- Kelola Film -->
                         <li>
-                            <a href="{{ route('admin.films.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.films.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                            <a href="{{ route('admin.films.index') }}" class="flex items-center px-4 py-3
+                             rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.films.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-film w-5"></i>
                                 <span class="ml-3">Kelola Film</span>
                             </a>
@@ -50,7 +53,8 @@
 
                         <!-- Kelola Jadwal -->
                         <li>
-                            <a href="{{ route('admin.jadwals.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.jadwals.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                            <a href="{{ route('admin.jadwals.index') }}" class="flex items-center px-4 py-3
+                             rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.jadwals.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-calendar-alt w-5"></i>
                                 <span class="ml-3">Kelola Jadwal</span>
                             </a>
@@ -58,7 +62,8 @@
 
                         <!-- Kelola Studio -->
                         <li>
-                            <a href="{{ route('admin.studios.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.studios.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                            <a href="{{ route('admin.studios.index') }}" class="flex items-center px-4 py-3
+                             rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.studios.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-door-open w-5"></i>
                                 <span class="ml-3">Kelola Studio</span>
                             </a>
@@ -66,7 +71,8 @@
 
                         <!-- Kelola Owner -->
                         <li>
-                            <a href="{{ route('admin.owners.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.owners.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                            <a href="{{ route('admin.owners.index') }}" class="flex items-center px-4 py-3
+                             rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.owners.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-crown w-5"></i>
                                 <span class="ml-3">Kelola Owner</span>
                             </a>
@@ -74,7 +80,8 @@
 
                         <!-- Kelola Kasir -->
                         <li>
-                            <a href="{{ route('admin.kasirs.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.kasirs.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                            <a href="{{ route('admin.kasirs.index') }}" class="flex items-center px-4 py-3 
+                            rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.kasirs.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-user-tie w-5"></i>
                                 <span class="ml-3">Kelola Kasir</span>
                             </a>
@@ -82,7 +89,8 @@
 
                         <!-- Kelola Pelanggan -->
                         <li>
-                            <a href="{{ route('admin.pelanggans.index') }}" class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.pelanggans.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
+                            <a href="{{ route('admin.pelanggans.index') }}" class="flex items-center px-4 py-3
+                             rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.pelanggans.*') ? 'bg-gray-800 text-white' : 'text-gray-300' }}">
                                 <i class="fas fa-users w-5"></i>
                                 <span class="ml-3">Kelola Pelanggan</span>
                             </a>

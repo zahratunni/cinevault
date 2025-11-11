@@ -25,7 +25,8 @@
                     Pilih Film <span class="text-red-500">*</span>
                 </label>
                 <select name="film_id" id="filmSelect" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('film_id') border-red-500 @enderror">
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                    focus:border-transparent @error('film_id') border-red-500 @enderror">
                     <option value="">-- Pilih Film --</option>
                     @foreach($films as $film)
                         <option value="{{ $film->film_id }}" 
@@ -46,7 +47,8 @@
                     Pilih Studio <span class="text-red-500">*</span>
                 </label>
                 <select name="studio_id" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('studio_id') border-red-500 @enderror">
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                    focus:border-transparent @error('studio_id') border-red-500 @enderror">
                     <option value="">-- Pilih Studio --</option>
                     @foreach($studios as $studio)
                         <option value="{{ $studio->studio_id }}" {{ old('studio_id') == $studio->studio_id ? 'selected' : '' }}>
@@ -69,7 +71,8 @@
                     </label>
                     <input type="date" name="tanggal_tayang" value="{{ old('tanggal_tayang') }}" 
                         min="{{ date('Y-m-d') }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('tanggal_tayang') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2
+                         focus:ring-blue-500 focus:border-transparent @error('tanggal_tayang') border-red-500 @enderror">
                     @error('tanggal_tayang')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -81,7 +84,8 @@
                         Jam Mulai <span class="text-red-500">*</span>
                     </label>
                     <input type="time" name="jam_mulai" id="jamMulai" value="{{ old('jam_mulai') }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('jam_mulai') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                        focus:border-transparent @error('jam_mulai') border-red-500 @enderror">
                     @error('jam_mulai')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -113,7 +117,8 @@
                     <span class="absolute left-4 top-2 text-gray-500">Rp</span>
                     <input type="number" name="harga_reguler" value="{{ old('harga_reguler', 50000) }}" 
                         min="0" step="1000" required
-                        class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('harga_reguler') border-red-500 @enderror"
+                        class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2
+                         focus:ring-blue-500 focus:border-transparent @error('harga_reguler') border-red-500 @enderror"
                         placeholder="50000">
                 </div>
                 @error('harga_reguler')
@@ -128,7 +133,8 @@
                     Status Jadwal <span class="text-red-500">*</span>
                 </label>
                 <select name="status_jadwal" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('status_jadwal') border-red-500 @enderror">
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                    focus:border-transparent @error('status_jadwal') border-red-500 @enderror">
                     <option value="Active" {{ old('status_jadwal', 'Active') == 'Active' ? 'selected' : '' }}>Active (Bisa Dipesan)</option>
                     <option value="Canceled" {{ old('status_jadwal') == 'Canceled' ? 'selected' : '' }}>Canceled (Dibatalkan)</option>
                     <option value="Full" {{ old('status_jadwal') == 'Full' ? 'selected' : '' }}>Full (Penuh)</option>

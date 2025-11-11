@@ -23,92 +23,99 @@ class MidtransController extends Controller
     /**
      * Generate Snap Token dan redirect ke Midtrans
      */
-    public function createTransaction($pemesanan_id)
-    {
-        $pemesanan = Pemesanan::with(['jadwal.film', 'jadwal.studio', 'detailPemesanans.kursi', 'user'])
-            ->findOrFail($pemesanan_id);
+   public function createTransaction($pemesanan_id)
+{
+    $pemesanan = Pemesanan::with(['jadwal.film', 'jadwal.studio', 'detailPemesanans.kursi', 'user'])
+        ->findOrFail($pemesanan_id);
 
-        // Cek kepemilikan
-        if ($pemesanan->user_id !== auth()->id()) {
-            abort(403, 'Anda tidak memiliki akses ke pemesanan ini.');
-        }
-
-        // Cek status
-        if ($pemesanan->status_pemesanan === 'Lunas') {
-            return redirect()->route('invoice.show', $pemesanan_id)
-                ->with('info', 'Pemesanan sudah lunas.');
-        }
-
-        // Generate unique transaction ID
-        $transaction_id = 'ORDER-' . $pemesanan->pemesanan_id . '-' . time();
-
-        // Buat atau update pembayaran
-        $pembayaran = $pemesanan->pembayaran;
-        
-        if (!$pembayaran) {
-            $pembayaran = Pembayaran::create([
-                'pemesanan_id' => $pemesanan->pemesanan_id,
-                'user_id' => auth()->id(),
-                'metode_bayar' => 'Online',
-                'nominal_dibayar' => $pemesanan->total_bayar,
-                'tanggal_pembayaran' => now(),
-                'status_pembayaran' => 'Pending',
-                'transaction_id' => $transaction_id,
-                'jenis_pembayaran' => 'Online',
-                'status_verifikasi' => 'pending',
-            ]);
-        } else {
-            $pembayaran->update([
-                'transaction_id' => $transaction_id,
-                'status_pembayaran' => 'Pending',
-                'status_verifikasi' => 'pending',
-            ]);
-        }
-
-        // Siapkan data untuk Midtrans
-        $params = [
-            'transaction_details' => [
-                'order_id' => $transaction_id,
-                'gross_amount' => (int) $pemesanan->total_bayar,
-            ],
-            'customer_details' => [
-                'first_name' => $pemesanan->user->name,
-                'email' => $pemesanan->user->email,
-                'phone' => $pemesanan->user->phone ?? '',
-            ],
-            'item_details' => [
-                [
-                    'id' => $pemesanan->jadwal->jadwal_id,
-                    'price' => (int) $pemesanan->jadwal->harga_reguler,
-                    'quantity' => $pemesanan->detailPemesanans->count(),
-                    'name' => $pemesanan->jadwal->film->judul . ' - ' . $pemesanan->jadwal->studio->nama_studio,
-                ]
-            ],
-            'enabled_payments' => [
-                'gopay', 'shopeepay', 'other_qris', // E-Wallet & QRIS
-                'bca_va', 'bni_va', 'bri_va', 'permata_va', // Virtual Account
-                'echannel', // Mandiri Bill
-                'credit_card' // Kartu Kredit
-            ],
-            'callbacks' => [
-                'finish' => route('midtrans.finish', $pemesanan_id)
-            ]
-        ];
-
-        try {
-            // Generate Snap Token
-            $snapToken = Snap::getSnapToken($params);
-
-            // Simpan snap token
-            $pembayaran->update(['snap_token' => $snapToken]);
-
-            // Return view dengan snap token
-            return view('films.midtrans-payment', compact('pemesanan', 'snapToken'));
-            
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal membuat transaksi: ' . $e->getMessage());
-        }
+    // Cek kepemilikan
+    if ($pemesanan->user_id !== auth()->id()) {
+        abort(403, 'Anda tidak memiliki akses ke pemesanan ini.');
     }
+
+    // Cek status
+    if ($pemesanan->status_pemesanan === 'Lunas') {
+        return redirect()->route('invoice.show', $pemesanan_id)
+            ->with('info', 'Pemesanan sudah lunas.');
+    }
+
+    if ($pemesanan->status_pemesanan === 'Kadaluarsa') {
+        return redirect()->route('profile.riwayat')
+            ->with('error', 'Pemesanan sudah kadaluarsa.');
+    }
+
+    // Ambil pembayaran yang sudah ada
+    $pembayaran = $pemesanan->pembayaran;
+
+    // ✅ Jika belum ada pembayaran, buat baru
+    if (!$pembayaran) {
+        $transaction_id = 'ORDER-' . $pemesanan->pemesanan_id . '-' . time();
+        
+        $pembayaran = Pembayaran::create([
+            'pemesanan_id' => $pemesanan->pemesanan_id,
+            'user_id' => auth()->id(),
+            'metode_bayar' => 'Online',
+            'nominal_dibayar' => $pemesanan->total_bayar,
+            'tanggal_pembayaran' => now(),
+            'status_pembayaran' => 'Pending',
+            'transaction_id' => $transaction_id,
+            'jenis_pembayaran' => 'Online',
+            'status_verifikasi' => 'pending',
+        ]);
+    } else {
+        // ✅ Jika sudah ada, update transaction_id baru (karena token lama mungkin expired)
+        $transaction_id = 'ORDER-' . $pemesanan->pemesanan_id . '-' . time();
+        
+        $pembayaran->update([
+            'transaction_id' => $transaction_id,
+            'status_pembayaran' => 'Pending',
+            'status_verifikasi' => 'pending',
+        ]);
+    }
+
+    // Siapkan data untuk Midtrans
+    $params = [
+        'transaction_details' => [
+            'order_id' => $pembayaran->transaction_id,
+            'gross_amount' => (int) $pemesanan->total_bayar,
+        ],
+        'customer_details' => [
+            'first_name' => $pemesanan->user->name,
+            'email' => $pemesanan->user->email,
+            'phone' => $pemesanan->user->phone ?? '',
+        ],
+        'item_details' => [
+            [
+                'id' => $pemesanan->jadwal->jadwal_id,
+                'price' => (int) $pemesanan->jadwal->harga_reguler,
+                'quantity' => $pemesanan->detailPemesanans->count(),
+                'name' => $pemesanan->jadwal->film->judul . ' - ' . $pemesanan->jadwal->studio->nama_studio,
+            ]
+        ],
+        'enabled_payments' => [
+            'gopay', 'shopeepay', 'other_qris',
+            'bca_va', 'bni_va', 'bri_va', 'permata_va',
+            'echannel', 'credit_card'
+        ],
+        'callbacks' => [
+            'finish' => route('midtrans.finish', $pemesanan_id)
+        ]
+    ];
+
+    try {
+        // Generate Snap Token BARU
+        $snapToken = Snap::getSnapToken($params);
+
+        // Simpan snap token
+        $pembayaran->update(['snap_token' => $snapToken]);
+
+        // ✅ LANGSUNG TAMPILKAN AUTO-POPUP
+        return view('films.midtrans-auto-popup', compact('pemesanan', 'snapToken'));
+        
+    } catch (\Exception $e) {
+        return back()->with('error', 'Gagal membuat transaksi: ' . $e->getMessage());
+    }
+}
 
     /**
      * Callback dari Midtrans (Webhook)

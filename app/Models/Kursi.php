@@ -15,14 +15,10 @@ class Kursi extends Model
     protected $fillable = [
         'studio_id', 'kode_kursi', 'baris', 'nomor_kursi'
     ];
-
-    // Kursi dimiliki oleh satu Studio
     public function studio(): BelongsTo
     {
         return $this->belongsTo(Studio::class, 'studio_id', 'studio_id');
     }
-
-    // Kursi muncul di banyak Detail Pemesanan
     public function detailPemesanans(): HasMany
     {
         return $this->hasMany(DetailPemesanan::class, 'kursi_id', 'kursi_id');

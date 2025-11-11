@@ -124,7 +124,8 @@
                     
                     <!-- Kursi -->
                     @foreach($kursis->sortBy('nomor_kursi') as $kursi)
-                    <div class="w-10 h-10 bg-green-100 border-2 border-green-500 rounded-t-lg flex items-center justify-center text-xs font-semibold text-green-700 hover:bg-green-200 transition cursor-pointer" 
+                    <div class="w-10 h-10 bg-green-100 border-2 border-green-500 rounded-t-lg flex items-center 
+                    justify-center text-xs font-semibold text-green-700 hover:bg-green-200 transition cursor-pointer" 
                          title="{{ $kursi->kode_kursi }}">
                         {{ $kursi->nomor_kursi }}
                     </div>

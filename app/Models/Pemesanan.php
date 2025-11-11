@@ -21,26 +21,24 @@ class Pemesanan extends Model
         'harga_dasar_total',
         'total_bayar',
         'tanggal_pemesanan',
-        'tiket_dicetak_at',    // ← Sudah ada
+        'tiket_dicetak_at',   
         'dicetak_oleh',
     ];
 
-    // ✅ TAMBAHKAN CAST INI
+
     protected $casts = [
         'tanggal_pemesanan' => 'datetime',
-        'tiket_dicetak_at' => 'datetime',  // ← PENTING!
+        'tiket_dicetak_at' => 'datetime',  
     ];
-
-    // Relasi
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     public function jadwal()
-{
+    {
     return $this->belongsTo(Jadwal::class, 'jadwal_id', 'jadwal_id');
-}
+    }
     public function detailPemesanans()
     {
         return $this->hasMany(DetailPemesanan::class, 'pemesanan_id', 'pemesanan_id');

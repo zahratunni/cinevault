@@ -25,7 +25,8 @@
                     Judul Film <span class="text-red-500">*</span>
                 </label>
                 <input type="text" name="judul" value="{{ old('judul') }}" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('judul') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                    focus:border-transparent @error('judul') border-red-500 @enderror"
                     placeholder="Contoh: Avengers: Endgame">
                 @error('judul')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -38,7 +39,8 @@
                     Sinopsis <span class="text-red-500">*</span>
                 </label>
                 <textarea name="sinopsis" rows="5" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('sinopsis') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                    focus:border-transparent @error('sinopsis') border-red-500 @enderror"
                     placeholder="Tulis sinopsis film...">{{ old('sinopsis') }}</textarea>
                 @error('sinopsis')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -57,7 +59,8 @@
                     </div>
                     <div class="flex-1">
                         <input type="file" name="poster" id="posterInput" accept="image/*" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('poster') border-red-500 @enderror"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                            focus:border-transparent @error('poster') border-red-500 @enderror"
                             onchange="previewPoster(event)">
                         <p class="text-xs text-gray-500 mt-2">Format: JPG, PNG, GIF, WEBP. Max: 2MB</p>
                         @error('poster')
@@ -76,7 +79,8 @@
                         Durasi (Menit) <span class="text-red-500">*</span>
                     </label>
                     <input type="number" name="durasi_menit" value="{{ old('durasi_menit') }}" min="30" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('durasi_menit') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                        focus:border-transparent @error('durasi_menit') border-red-500 @enderror"
                         placeholder="Contoh: 120">
                     @error('durasi_menit')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -89,7 +93,8 @@
                         Rating Usia <span class="text-red-500">*</span>
                     </label>
                     <select name="rating" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('rating') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                        focus:border-transparent @error('rating') border-red-500 @enderror">
                         <option value="">Pilih Rating</option>
                         <option value="SU" {{ old('rating') == 'SU' ? 'selected' : '' }}>SU (Semua Umur)</option>
                         <option value="13+" {{ old('rating') == '13+' ? 'selected' : '' }}>13+</option>
@@ -107,7 +112,8 @@
                         Genre <span class="text-red-500">*</span>
                     </label>
                     <select name="genre" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('genre') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                        focus:border-transparent @error('genre') border-red-500 @enderror">
                         <option value="">Pilih Genre</option>
                         <option value="Action" {{ old('genre') == 'Action' ? 'selected' : '' }}>Action</option>
                         <option value="Adventure" {{ old('genre') == 'Adventure' ? 'selected' : '' }}>Adventure</option>
@@ -130,7 +136,8 @@
                         Status Tayang <span class="text-red-500">*</span>
                     </label>
                     <select name="status_tayang" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('status_tayang') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                        focus:border-transparent @error('status_tayang') border-red-500 @enderror">
                         <option value="">Pilih Status</option>
                         <option value="Playing Now" {{ old('status_tayang') == 'Playing Now' ? 'selected' : '' }}>Playing Now</option>
                         <option value="Upcoming" {{ old('status_tayang') == 'Upcoming' ? 'selected' : '' }}>Upcoming</option>
@@ -148,7 +155,8 @@
                     Trailer URL (YouTube)
                 </label>
                 <input type="url" name="trailer_url" value="{{ old('trailer_url') }}"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('trailer_url') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 
+                    focus:ring-blue-500 focus:border-transparent @error('trailer_url') border-red-500 @enderror"
                     placeholder="https://www.youtube.com/watch?v=...">
                 @error('trailer_url')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

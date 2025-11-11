@@ -13,7 +13,8 @@
                     <div class="sticky top-28 w-full max-w-sm lg:max-w-none">
                         <img src="{{ asset($film->poster_url) }}"
                              alt="{{ $film->judul }}"
-                             class="w-full aspect-[2/3] object-cover rounded-xl shadow-[0_0_25px_rgba(0,123,255,0.2)] border border-gray-200 transform hover:scale-[1.01] transition-transform duration-300">
+                             class="w-full aspect-[2/3] object-cover rounded-xl shadow-[0_0_25px_rgba(0,123,255,0.2)]
+                              border border-gray-200 transform hover:scale-[1.01] transition-transform duration-300">
                     </div>
                 </div>
 
@@ -41,7 +42,8 @@
                     @if($film->trailer_url)
                     <div class="pt-2">
                         <a href="{{ $film->trailer_url }}" target="_blank"
-                           class="inline-flex items-center gap-3 bg-[#007BFF] hover:bg-[#0056B3] text-white font-bold px-8 py-3.5 rounded-full transition-all duration-300 shadow-[0_0_15px_rgba(0,123,255,0.4)] hover:scale-105">
+                           class="inline-flex items-center gap-3 bg-[#007BFF] hover:bg-[#0056B3] text-white font-bold px-8 py-3.5 
+                           rounded-full transition-all duration-300 shadow-[0_0_15px_rgba(0,123,255,0.4)] hover:scale-105">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
                             </svg>
@@ -190,7 +192,8 @@
                                         @if(!$isClickable)
                                             <div class="bg-red-100 text-red-700 px-4 py-2 rounded-lg flex items-center gap-2">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                                 </svg>
                                                 <span class="font-bold">Belum Bisa Dipesan</span>
                                             </div>
@@ -203,7 +206,8 @@
                                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                         @foreach($jadwals as $jadwal)
                                             <a href="{{ route('booking.kursi', $jadwal->jadwal_id) }}" 
-                                               class="block bg-white hover:bg-[#EBF7FF] border-2 border-gray-200 hover:border-[#007BFF] rounded-xl p-6 transition-all duration-300 group hover:scale-105 shadow-sm hover:shadow-lg text-center">
+                                               class="block bg-white hover:bg-[#EBF7FF] border-2 border-gray-200 hover:border-[#007BFF] rounded-xl p-6 transition-all duration-300 
+                                               group hover:scale-105 shadow-sm hover:shadow-lg text-center">
                                                 <div class="mb-4">
                                                     <span class="text-4xl font-extrabold text-[#2C3E50] group-hover:text-[#007BFF]">
                                                         {{ \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i') }}
@@ -211,11 +215,14 @@
                                                 </div>
                                                 <div class="flex items-center justify-center gap-2 text-sm text-gray-500 group-hover:text-gray-700 mb-4">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 
+                                                        4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                                     </svg>
                                                     <span class="font-medium">{{ $jadwal->studio->nama_studio }}</span>
                                                 </div>
-                                                <div class="inline-flex items-center text-sm font-bold text-[#007BFF] group-hover:text-[#0056B3] transition-colors duration-200">
+                                                <div class="inline-flex items-center text-sm font-bold text-[#007BFF] group-hover:text-[#0056B3] 
+                                                transition-colors duration-200">
                                                     Pilih Kursi <i class="fas fa-arrow-right ml-2 text-xs"></i>
                                                 </div>
                                             </a>
@@ -224,11 +231,14 @@
                                 @else
                                     <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-8 text-center">
                                         <svg class="w-16 h-16 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-
+                                            .77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                         </svg>
                                         <h3 class="text-xl font-bold text-yellow-800 mb-2">Belum Bisa Dipesan</h3>
                                         <p class="text-yellow-700 mb-1">Pemesanan untuk tanggal ini belum dibuka.</p>
-                                        <p class="text-yellow-700 font-semibold">Silakan pilih <strong>Hari Ini</strong> atau <strong>Besok</strong> di kalender.</p>
+                                        <p class="text-yellow-700 font-semibold">Silakan pilih <strong>Hari Ini</strong> atau 
+                                        <strong>Besok</strong> di kalender.</p>
                                     </div>
                                 @endif
                             </div>
@@ -315,7 +325,8 @@
             const dotIndicator = hasSchedule ? '<div class="absolute bottom-0.5 w-1.5 h-1.5 bg-current rounded-full"></div>' : '';
             
             calendarDates.innerHTML += `
-                <div class="${classes}" ${onclick} data-date="${dateStr}" title="${hasSchedule ? (isPast ? 'Jadwal sudah lewat' : (isClickable ? 'Klik untuk lihat jadwal' : 'Belum bisa dipesan')) : 'Tidak ada jadwal'}">
+                <div class="${classes}" ${onclick} data-date="${dateStr}" title="${hasSchedule ? 
+                (isPast ? 'Jadwal sudah lewat' : (isClickable ? 'Klik untuk lihat jadwal' : 'Belum bisa dipesan')) : 'Tidak ada jadwal'}">
                     ${day}
                     ${dotIndicator}
                 </div>

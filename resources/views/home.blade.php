@@ -17,10 +17,12 @@
                     <img src="{{ asset('7.jpg') }}" class="w-full h-full object-cover" alt="Movie Banner">
                 </div>
                 <div class="swiper-slide">
-                    <div class="w-full h-full bg-cover bg-center" style="background-image: url('https://via.placeholder.com/1920x1080/0056B3/FFFFFF?text=Movie+Banner+2');"></div>
+                    <div class="w-full h-full bg-cover bg-center" style="background-image: url
+                    ('https://via.placeholder.com/1920x1080/0056B3/FFFFFF?text=Movie+Banner+2');"></div>
                 </div>
                 <div class="swiper-slide">
-                    <div class="w-full h-full bg-cover bg-center" style="background-image: url('https://via.placeholder.com/1920x1080/003F8C/FFFFFF?text=Movie+Banner+3');"></div>
+                    <div class="w-full h-full bg-cover bg-center" style="background-image: url
+                    ('https://via.placeholder.com/1920x1080/003F8C/FFFFFF?text=Movie+Banner+3');"></div>
                 </div>
             </div>
         </div>
@@ -37,11 +39,13 @@
                         Pesan tiket dengan mudah, nikmati film terbaik
                     </p>
                     <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-                        <a href="#playing-now" class="inline-flex items-center justify-center bg-white text-[#007BFF] font-bold py-3 sm:py-4 px-8 sm:px-10 rounded-full hover:bg-[#66CCFF] hover:text-white transition-all duration-300 shadow-xl text-sm sm:text-base">
+                        <a href="#playing-now" class="inline-flex items-center justify-center bg-white text-[#007BFF] font-bold py-3 sm:py-4 px-8 sm:px-10 
+                        rounded-full hover:bg-[#66CCFF] hover:text-white transition-all duration-300 shadow-xl text-sm sm:text-base">
                             Jelajahi Film
                             <i class="fas fa-arrow-right ml-2 sm:ml-3"></i>
                         </a>
-                        <a href="#why-choose" class="inline-flex items-center justify-center bg-transparent border-2 border-white text-white font-bold py-3 sm:py-4 px-8 sm:px-10 rounded-full hover:bg-white hover:text-[#007BFF] transition-all duration-300 text-sm sm:text-base">
+                        <a href="#why-choose" class="inline-flex items-center justify-center bg-transparent border-2 border-white text-white 
+                        font-bold py-3 sm:py-4 px-8 sm:px-10 rounded-full hover:bg-white hover:text-[#007BFF] transition-all duration-300 text-sm sm:text-base">
                             Pelajari Lebih
                         </a>
                     </div>
@@ -73,7 +77,8 @@
                         <div class="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
                             <div class="aspect-[2/3] relative overflow-hidden bg-gray-50">
                                 @if($film->poster_url)
-                                    <img src="{{ asset($film->poster_url) }}" alt="{{ $film->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                    <img src="{{ asset($film->poster_url) }}" alt="{{ $film->judul }}" class="w-full h-full object-cover group-hover:scale-105 
+                                    transition-transform duration-700">
                                 @else
                                     <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
                                         <i class="fas fa-film text-4xl text-gray-300"></i>
@@ -91,7 +96,9 @@
                                     <span class="bg-[#E3F2FD] text-[#007BFF] px-3 py-1 rounded-full font-medium">{{ $film->genre }}</span>
                                     <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full font-medium">{{ $film->durasi_menit }} min</span>
                                 </div>
-                                <a href="{{ route('film.show', $film->film_id) }}" class="mt-auto w-full bg-[#007BFF] text-white text-center font-bold py-3 rounded-full hover:bg-[#0056B3] transition-all duration-300">
+                                <a href="{{ route('film.show', $film->film_id) }}" class="mt-auto w-full bg-[#007BFF] text-white text-center font-bold py-3
+                                 rounded-full hover:bg-[#0056B3] 
+                                transition-all duration-300">
                                     Beli Tiket
                                 </a>
                             </div>
@@ -107,7 +114,8 @@
             </div>
 
             <div class="text-center">
-                <a href="{{ route('films.playingNow') }}" class="inline-flex items-center bg-[#007BFF] text-white font-bold py-4 px-8 rounded-full hover:bg-[#0056B3] transition-all duration-300 shadow-lg hover:shadow-xl group">
+                <a href="{{ route('films.playingNow') }}" class="inline-flex items-center bg-[#007BFF] text-white font-bold py-4 px-8 rounded-full 
+                hover:bg-[#0056B3] transition-all duration-300 shadow-lg hover:shadow-xl group">
                     Lihat Semua Film
                     <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                 </a>
@@ -130,7 +138,8 @@
                         <div class="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-full flex flex-col border border-gray-100">
                             <div class="aspect-[2/3] relative overflow-hidden bg-gray-50">
                                 @if($film->poster_url)
-                                    <img src="{{ asset($film->poster_url) }}" alt="{{ $film->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                    <img src="{{ asset($film->poster_url) }}" alt="{{ $film->judul }}" class="w-full h-full object-cover group-hover:scale-105 
+                                    transition-transform duration-700">
                                 @else
                                     <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
                                         <i class="fas fa-film text-4xl text-gray-300"></i>
@@ -148,7 +157,8 @@
                                     <span class="bg-[#E3F2FD] text-[#007BFF] px-3 py-1 rounded-full font-medium">{{ $film->genre }}</span>
                                     <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full font-medium">{{ $film->durasi_menit }} min</span>
                                 </div>
-                                <a href="{{ route('film.show', $film->film_id) }}" class="mt-auto w-full bg-[#007BFF] text-white text-center font-bold py-3 rounded-full hover:bg-[#0056B3] transition-all duration-300">
+                                <a href="{{ route('film.show', $film->film_id) }}" class="mt-auto w-full bg-[#007BFF] text-white text-center font-bold py-3 
+                                rounded-full hover:bg-[#0056B3] transition-all duration-300">
                                     Lihat Detail
                                 </a>
                             </div>
@@ -164,7 +174,8 @@
             </div>
 
             <div class="text-center">
-                <a href="{{ route('films.upcoming') }}" class="inline-flex items-center bg-[#007BFF] text-white font-bold py-4 px-8 rounded-full hover:bg-[#0056B3] transition-all duration-300 shadow-lg hover:shadow-xl group">
+                <a href="{{ route('films.upcoming') }}" class="inline-flex items-center bg-[#007BFF] text-white font-bold py-4 px-8 rounded-full hover:bg-[#0056B3]
+                 transition-all duration-300 shadow-lg hover:shadow-xl group">
                     Lihat Semua Film
                     <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                 </a>
@@ -194,7 +205,8 @@
 
                 @foreach($features as $item)
                     <div class="text-center p-8 bg-white rounded-3xl border border-gray-100 hover:border-[#007BFF] hover:shadow-lg transition-all duration-300">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#007BFF] to-[#0056B3] rounded-2xl text-white text-2xl mb-5 shadow-lg">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#007BFF] to-[#0056B3] rounded-2xl text-white text-2xl 
+                        mb-5 shadow-lg">
                             <i class="{{ $item[0] }}"></i>
                         </div>
                         <h3 class="text-lg font-bold text-[#2C3E50] mb-2">{{ $item[1] }}</h3>

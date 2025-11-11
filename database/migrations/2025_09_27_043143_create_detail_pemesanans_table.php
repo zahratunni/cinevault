@@ -24,12 +24,10 @@ class CreateDetailPemesanansTable extends Migration
             
             // Data Keuangan
             $table->decimal('harga_per_kursi', 10, 2);
-            
+
             // Kontrol Penting: Mencegah Kursi Ganda dalam Transaksi
             // Kursi_id dan pemesanan_id harus unik. Ini berarti satu kursi fisik hanya bisa muncul SATU kali di SATU pemesanan.
             $table->unique(['pemesanan_id', 'kursi_id']);
-            
-            // Kolom Audit
             $table->timestamps(); 
         });
     }

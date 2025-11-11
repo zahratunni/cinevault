@@ -17,7 +17,14 @@ class FilmSeeder extends Seeder
 
          Film::create([
             'judul' => 'Andai Ibu Tidak Menikah Dengan Ayah', 
-            'sinopsis' => 'Saat beasiswa kuliah kedokterannya terancam dicabut, Alin (Amanda Rawles) yang merantau terpaksa kembali ke rumah. Setelah kembali ke rumah, ia kemudian menyadari bahwa kehidupan keluarganya kini makin susah, sementara Ayahnya (Bucek) jarang ada di rumah. Adik (Nayla Purnama)dan Kakaknya (Eva Celia) juga harus menanggung banyak beban di keluarga hingga mengorbankan diri dan mimpi-mimpi mereka. Alin juga tanpa sengaja menemukan buku harian milik ibunya. Isi buku harian tersebut penuh dengan memori masa muda ibunya, termasuk mimpi-mimpinya. Ini membuat Alin bertanya-tanya, andai ibu tidak menikah dengan ayah, akankah hidup ibunya lebih bahagia? Pertanyaan itu pun membuat Alin berpikir apakah Irfan (Indian Akbar), pasangannya, adalah pasangan yang tepat untuk dirinya?', 
+            'sinopsis' => 'Saat beasiswa kuliah kedokterannya terancam dicabut, Alin (Amanda Rawles)
+             yang merantau terpaksa kembali ke rumah. Setelah kembali ke rumah, ia kemudian menyadari bahwa kehidupan
+              keluarganya kini makin susah, sementara Ayahnya (Bucek) jarang ada di rumah. Adik (Nayla Purnama)
+              dan Kakaknya (Eva Celia) juga harus menanggung banyak beban di keluarga hingga mengorbankan diri dan 
+              mimpi-mimpi mereka. Alin juga tanpa sengaja menemukan buku harian milik ibunya. Isi buku harian tersebut
+               penuh dengan memori masa muda ibunya, termasuk mimpi-mimpinya. Ini membuat Alin bertanya-tanya, andai
+                ibu tidak menikah dengan ayah, akankah hidup ibunya lebih bahagia? Pertanyaan itu pun membuat Alin berpikir
+                 apakah Irfan (Indian Akbar), pasangannya, adalah pasangan yang tepat untuk dirinya?', 
             'durasi_menit' => 119, 
             'rating' => '13+', 
             'genre' => 'Drama', 

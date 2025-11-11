@@ -94,6 +94,8 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('kasirs', AdminKasirController::class);
     Route::resource('owners', AdminOwnerController::class);
 
+    
+
     // Pelanggan Management
     Route::get('/pelanggans', [AdminPelangganController::class, 'index'])->name('pelanggans.index');
     Route::get('/pelanggans/{pelanggan}', [AdminPelangganController::class, 'show'])->name('pelanggans.show');
@@ -150,14 +152,9 @@ Route::middleware(['auth', 'role:Kasir'])->prefix('kasir')->name('kasir.')->grou
 Route::middleware(['auth', 'role:Customer'])->group(function () {
     // Booking
     Route::get('/booking/{jadwal_id}/kursi', [BookingController::class, 'create'])->name('booking.kursi');
+    //midtrans di kursi
     Route::post('/booking/proses', [BookingController::class, 'store'])->name('booking.store');
-    Route::get('/booking/success/{pemesanan_id}', [BookingController::class, 'success'])->name('booking.success');
-
-    // Payment
-    Route::get('/payment/{pemesanan_id}', [PaymentController::class, 'show'])->name('payment.show');
-    Route::post('/payment/{pemesanan_id}/process', [PaymentController::class, 'process'])->name('payment.process');
-
-    // Midtrans Payment
+    // Midtrans Payment di riwayat transakasi
     Route::get('/payment/midtrans/{pemesanan_id}', [MidtransController::class, 'createTransaction'])->name('midtrans.create');
     Route::get('/payment/midtrans/finish/{pemesanan_id}', [MidtransController::class, 'finish'])->name('midtrans.finish');
     Route::get('/payment/confirm/{pemesanan_id}', [MidtransController::class, 'manualCallback'])->name('midtrans.confirm');

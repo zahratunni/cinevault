@@ -31,8 +31,7 @@ class CreateFilmsTable extends Migration
             $table->string('penulis', 100)->nullable();
             $table->string('produksi', 100)->nullable();
             $table->text('cast_list')->nullable(); // Menggunakan TEXT untuk daftar pemeran
-            // Kolom Audit
-            $table->timestamps(); // Menciptakan created_at dan updated_at
+            $table->timestamps(); 
         });
     }
 

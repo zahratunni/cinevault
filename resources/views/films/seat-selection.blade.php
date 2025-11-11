@@ -6,7 +6,8 @@
 
         <!-- Header Info Film & Jadwal -->
         <div class="mb-8">
-            <a href="{{ route('film.show', $jadwal->film->film_id) }}" class="text-gray-600 hover:text-[#007BFF] mb-4 inline-block transition-colors duration-200">
+            <a href="{{ route('film.show', $jadwal->film->film_id) }}" class="text-gray-600 hover:text-[#007BFF] 
+            mb-4 inline-block transition-colors duration-200">
                 ← Kembali ke Detail Film
             </a>
         </div>
@@ -155,7 +156,8 @@
                     <!-- Tombol Pembayaran -->
                     <button type="button" 
                             id="btnPembayaran"
-                            class="w-full bg-[#007BFF] hover:bg-[#0056B3] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-md hover:shadow-xl transform hover:scale-105 
+                            class="w-full bg-[#007BFF] hover:bg-[#0056B3] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-md hover:shadow-xl
+                             transform hover:scale-105 
                                    disabled:opacity-50 disabled:cursor-not-allowed hidden">
                         Lanjutkan Pembayaran
                     </button>
